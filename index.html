@@ -2,18 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Passport Tracking System</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <style>
+        /* Base Reset & Typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        body { height: 100vh; overflow: hidden; background-color: #f9f9f9; }
+
+        /* Split Screen Layout */
+        .split-layout { display: flex; height: 100vh; width: 100vw; transition: flex-direction 0.3s ease; }
+        .split-layout.login-mode { flex-direction: row-reverse; } /* Swaps image to the left for login */
+
+        /* Form Side */
+        .form-side { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 12%; background: #ffffff; }
+        .form-container { width: 100%; max-width: 400px; margin: 0 auto; }
+        h2 { font-size: 24px; color: #111; margin-bottom: 8px; }
+        .divider { height: 8px; width: 100%; background-color: #e0e0e0; margin-bottom: 24px; border-radius: 4px; }
+        
+        /* Inputs & Labels */
+        label { display: block; font-size: 11px; font-weight: bold; color: #333; margin-top: 16px; margin-bottom: 6px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #d1d1d1; border-radius: 4px; font-size: 14px; outline: none; }
+        input[type="text"]:focus, input[type="password"]:focus { border-color: #111; }
+        
+        /* Checkbox */
+        .checkbox-group { display: flex; align-items: center; margin-top: 16px; gap: 8px; }
+        .checkbox-group label { margin: 0; font-weight: normal; font-size: 11px; color: #555; }
+        .checkbox-group strong { color: #111; }
+
+        /* Buttons & Text */
+        .btn-black { width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 4px; font-weight: bold; margin-top: 24px; cursor: pointer; transition: 0.2s; }
+        .btn-black:hover { background: #333; }
+        .switch-text { text-align: center; font-size: 12px; margin-top: 16px; color: #555; }
+        .switch-text a { color: #111; font-weight: bold; text-decoration: none; cursor: pointer; }
+        
+        /* Error State */
+        .error-text { color: #d93025; font-size: 12px; font-weight: bold; margin-bottom: -10px; display: none; }
+
+        /* Image Placeholder Side */
+        .image-side { flex: 1; background: #eaeaea; display: flex; align-items: center; justify-content: center; }
+        .placeholder-box { width: 60%; height: 40%; border: 2px solid #ccc; position: relative; }
+        .placeholder-box::before { content: "Image placeholder"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #777; font-size: 12px; }
+        .placeholder-box::after { content: ""; position: absolute; bottom: -50px; left: -2px; width: 1px; height: 50px; background: #ccc; }
+
+        /* Success Modal Overlay */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f9f9f9; display: flex; align-items: center; justify-content: center; z-index: 10; display: none; }
+        .modal-card { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; width: 350px; }
+        .check-circle { width: 40px; height: 40px; background: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: #111; font-size: 20px; font-weight: bold; }
+        .modal-card h3 { font-size: 18px; margin-bottom: 16px; }
+        .skeleton-line { height: 10px; background: #e0e0e0; margin: 8px auto; border-radius: 4px; width: 80%; }
+        .skeleton-line.short { width: 40%; }
+    </style>
 </head>
 <body>
 
-    <h1>Passport Tracking System</h1>
-    
-    <input type="text" id="passportInput" placeholder="Enter Reference Number">
-    <button id="trackBtn">Check Status</button>
+    <div id="main-layout" class="split-layout">
+        
+        <!-- Left/Right Form Container -->
+        <div class="form-side">
+            
+            <!-- SIGN UP VIEW -->
+            <div id="signup-view" class="form-container">
+                <h2>Create your account</h2>
+                <div class="divider"></div>
+                <label>Full name</label>
+                <input type="text" placeholder="........">
+                
+                <label>Email address or phone number</label>
+                <input type="text" placeholder="........">
+                
+                <label>Password</label>
+                <input type="password" placeholder="........">
+                
+                <label>Confirm password</label>
+                <input type="password" placeholder="........">
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms">
+                    <label for="terms">I agree to the <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.</label>
+                </div>
+                
+                <button class="btn-black" onclick="showSuccessModal()">Sign Up</button>
+                <p class="switch-text">Already have an account? <a onclick="toggleView('login')">Log in.</a></p>
+            </div>
 
-    <script src="script.js"></script>
+            <!-- LOG IN VIEW (Hidden by default) -->
+            <div id="login-view" class="form-container" style="display: none;">
+                <h2>Log in</h2>
+                <div class="divider"></div>
+                
+                <p id="error-message" class="error-text">Invalid credentials</p>
+                
+                <label>Email address</label>
+                <input type="text" placeholder="........">
+                
+                <label>Password</label>
+                <input type="password" placeholder="........">
+                
+                <button class="btn-black" onclick="triggerError()">Log in</button>
+                <p class="switch-text">Need an account? <a onclick="toggleView('signup')">Sign up.</a></p>
+            </div>
+
+        </div>
+
+        <!-- Left/Right Image Container -->
+        <div class="image-side">
+            <div class="placeholder-box"></div>
+        </div>
+
+    </div>
+
+    <!-- REGISTRATION SUCCESS MODAL -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="check-circle">✓</div>
+            <h3>Registration Successful!</h3>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+            <button class="btn-black" style="background: #111;" onclick="closeModal()">Back to Home</button>
+        </div>
+    </div>
+
+    <!-- Interactive Logic -->
+    <script>
+        const layout = document.getElementById('main-layout');
+        const signupView = document.getElementById('signup-view');
+        const loginView = document.getElementById('login-view');
+        const errorMsg = document.getElementById('error-message');
+        const successModal = document.getElementById('success-modal');
+
+        function toggleView(view) {
+            // Hide error message when switching tabs
+            errorMsg.style.display = 'none';
+
+            if (view === 'login') {
+                signupView.style.display = 'none';
+                loginView.style.display = 'block';
+                layout.classList.add('login-mode'); // Moves image to the left
+            } else {
+                loginView.style.display = 'none';
+                signupView.style.display = 'block';
+                layout.classList.remove('login-mode'); // Moves image back to the right
+            }
+        }
+
+        function triggerError() {
+            errorMsg.style.display = 'block';
+        }
+
+        function showSuccessModal() {
+            successModal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            successModal.style.display = 'none';
+        }
+    </script>
 </body>
 </html>
-
-
