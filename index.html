@@ -34,11 +34,53 @@
         .switch-text { text-align: center; font-size: 12px; margin-top: 16px; color: #555; }
         .switch-text a { color: #111; font-weight: bold; text-decoration: none; cursor: pointer; }
         
-        /* Image Placeholder Side */
-        .image-side { flex: 1; background: #eaeaea; display: flex; align-items: center; justify-content: center; }
-        .placeholder-box { width: 60%; height: 40%; border: 2px solid #ccc; position: relative; }
-        .placeholder-box::before { content: "Image placeholder"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #777; font-size: 12px; }
-        .placeholder-box::after { content: ""; position: absolute; bottom: -50px; left: -2px; width: 1px; height: 50px; background: #ccc; }
+        /* Image Carousel Side */
+        .image-side { 
+            flex: 1; 
+            background: #000; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .carousel-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .carousel-slide {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
+            border: none;
+            cursor: pointer;
+            padding: 12px 16px;
+            font-size: 20px;
+            border-radius: 50%;
+            z-index: 10;
+            transition: background 0.3s;
+        }
+        .carousel-btn:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        .carousel-btn.prev {
+            left: 20px;
+        }
+        .carousel-btn.next {
+            right: 20px;
+        }
     </style>
 </head>
 <body>
@@ -73,12 +115,56 @@
             </div>
         </div>
 
-        <!-- Right Image Container -->
+        <!-- Right Image Container (Updated to Carousel) -->
         <div class="image-side">
-            <div class="placeholder-box"></div>
+            <div class="carousel-container">
+                <div class="carousel-slide">
+                    <img src="fuji.jpg" alt="Mount Fuji, Japan">
+                    <img src="kyoto.jpg" alt="Kyoto, Japan">
+                    <img src="tokyo.jpg" alt="Tokyo, Japan">
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <button id="prevBtn" class="carousel-btn prev">&#10094;</button>
+                <button id="nextBtn" class="carousel-btn next">&#10095;</button>
+            </div>
         </div>
 
     </div>
 
+    <!-- JavaScript for sliding functionality -->
+    <script>
+        const carouselSlide = document.querySelector('.carousel-slide');
+        const images = document.querySelectorAll('.carousel-slide img');
+        const prevBtn = document.querySelector('#prevBtn');
+        const nextBtn = document.querySelector('#nextBtn');
+
+        let counter = 0;
+
+        // Moves the slide based on the current counter
+        function updateSlide() {
+            carouselSlide.style.transform = `translateX(${-counter * 100}%)`;
+        }
+
+        // Next Button Logic
+        nextBtn.addEventListener('click', () => {
+            if (counter >= images.length - 1) {
+                counter = 0; // Go back to first image
+            } else {
+                counter++; // Go to next image
+            }
+            updateSlide();
+        });
+
+        // Previous Button Logic
+        prevBtn.addEventListener('click', () => {
+            if (counter <= 0) {
+                counter = images.length - 1; // Go to last image
+            } else {
+                counter--; // Go to previous image
+            }
+            updateSlide();
+        });
+    </script>
 </body>
 </html>
