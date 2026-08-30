@@ -45,6 +45,7 @@
             width: 100%;
             height: 100%;
             position: relative;
+            overflow: hidden;
         }
         .carousel-slide {
             display: flex;
@@ -54,6 +55,7 @@
         }
         .carousel-slide img {
             width: 100%;
+            min-width: 100%;
             height: 100%;
             object-fit: cover;
             flex-shrink: 0;
@@ -87,7 +89,6 @@
 
     <div class="split-layout">
         
-        <!-- Left Form Container -->
         <div class="form-side">
             <div class="form-container">
                 <h2>Create your account</h2>
@@ -115,7 +116,6 @@
             </div>
         </div>
 
-        <!-- Right Image Container (Updated to Carousel) -->
         <div class="image-side">
             <div class="carousel-container">
                 <div class="carousel-slide">
@@ -124,7 +124,6 @@
                     <img src="tokyo.jpg" alt="Tokyo, Japan">
                 </div>
                 
-                <!-- Navigation Buttons -->
                 <button id="prevBtn" class="carousel-btn prev">&#10094;</button>
                 <button id="nextBtn" class="carousel-btn next">&#10095;</button>
             </div>
@@ -132,7 +131,6 @@
 
     </div>
 
-    <!-- JavaScript for sliding functionality -->
     <script>
         const carouselSlide = document.querySelector('.carousel-slide');
         const images = document.querySelectorAll('.carousel-slide img');
@@ -141,27 +139,24 @@
 
         let counter = 0;
 
-        // Moves the slide based on the current counter
         function updateSlide() {
             carouselSlide.style.transform = `translateX(${-counter * 100}%)`;
         }
 
-        // Next Button Logic
         nextBtn.addEventListener('click', () => {
             if (counter >= images.length - 1) {
-                counter = 0; // Go back to first image
+                counter = 0;
             } else {
-                counter++; // Go to next image
+                counter++;
             }
             updateSlide();
         });
 
-        // Previous Button Logic
         prevBtn.addEventListener('click', () => {
             if (counter <= 0) {
-                counter = images.length - 1; // Go to last image
+                counter = images.length - 1;
             } else {
-                counter--; // Go to previous image
+                counter--;
             }
             updateSlide();
         });
