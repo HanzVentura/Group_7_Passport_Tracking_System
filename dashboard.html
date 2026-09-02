@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passport Tracker | Dashboard</title>
+  <link rel="stylesheet" href="dashstyle.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar__profile">
+        <div class="profile-avatar" aria-hidden="true">
+          <img src="icons/user.svg" width="36" height="36" alt="">
+        </div>
+        <span class="profile-name">JUAN DELA CRUZ</span>
+      </div>
+
+      <nav class="sidebar__nav" aria-label="Primary navigation">
+        <ul>
+          <li>
+            <a href="#dashboard" class="nav-link nav-link--active" aria-current="page">
+              <img class="nav-icon" src="icons/layout-dashboard.svg" width="22" height="22" alt="">
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#payments" class="nav-link">
+              <img class="nav-icon" src="icons/credit-card-pay.svg" width="22" height="22" alt="">
+              <span>Payments</span>
+            </a>
+          </li>
+          <li>
+            <a href="#receipts" class="nav-link">
+              <img class="nav-icon" src="icons/receipt.svg" width="22" height="22" alt="">
+              <span>Receipts</span>
+            </a>
+          </li>
+          <li>
+            <a href="#enquiries" class="nav-link">
+              <img class="nav-icon" src="icons/mail-fast.svg" width="22" height="22" alt="">
+              <span>Enquiries</span>
+            </a>
+          </li>
+          <li>
+            <a href="#profile" class="nav-link">
+              <img class="nav-icon" src="icons/user.svg" width="22" height="22" alt="">
+              <span>Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="#settings" class="nav-link">
+              <img class="nav-icon" src="icons/settings.svg" width="22" height="22" alt="">
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <h1>DASHBOARD</h1>
+      </header>
+
+      <main class="main-content">
+        <!-- Welcome message -->
+        <section class="welcome-card">
+          <h2>Good Day, Juan Dela Cruz</h2>
+          <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
+        </section>
+
+        <!-- Dashboard cards -->
+        <div class="dashboard-grid">
+          <article class="dashboard-card">
+            <h3 class="card-title">Active Application</h3>
+
+            <dl class="application-details">
+              <div class="detail-item">
+                <dt>Application ID</dt>
+                <dd>xxx - xxx - xxx</dd>
+              </div>
+
+              <div class="detail-item">
+                <dt>Type</dt>
+                <dd>Renewal / Apply</dd>
+              </div>
+
+              <div class="detail-item">
+                <dt>Current Status</dt>
+                <dd class="detail-value--status">Processing</dd>
+              </div>
+
+              <div class="detail-item">
+                <dt>Submitted</dt>
+                <dd>
+                  <time datetime="2026-08-30">30 Aug 2026</time>
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="dashboard-card">
+            <h3 class="card-title">Application Status</h3>
+            <ol class="timeline">
+              <li class="timeline__step timeline__step--completed">
+                <span class="step-marker"></span>
+                <span class="step-label">Submitted</span>
+              </li>
+              <li class="timeline__step timeline__step--completed">
+                <span class="step-marker"></span>
+                <span class="step-label">Payment</span>
+              </li>
+              <li class="timeline__step timeline__step--completed">
+                <span class="step-marker"></span>
+                <span class="step-label">Under review</span>
+              </li>
+              <li class="timeline__step timeline__step--completed">
+                <span class="step-marker"></span>
+                <span class="step-label">Processing</span>
+              </li>
+              <li class="timeline__step timeline__step--upcoming">
+                <span class="step-marker"></span>
+                <span class="step-label">Ready to pick-up</span>
+              </li>
+            </ol>
+          </article>
+
+          <article class="dashboard-card">
+            <h3 class="card-title">Pending Action</h3>
+            <div class="pending-box">
+              <h4 class="pending-box__title">Processing:</h4>
+              <p class="pending-box__text">
+                You are expected to come on
+                <strong>
+                  <time datetime="2026-09-26T10:30">September 26, 2026 at 10:30 AM</time>
+                </strong>
+                in Central Passport Office
+              </p>
+            </div>
+          </article>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
