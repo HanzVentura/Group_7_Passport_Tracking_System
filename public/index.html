@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account / Log In</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="split-layout" id="mainLayout">
+        
+        <!-- Form Side -->
+        <div class="form-side">
+            <div class="form-container">
+                
+                <!-- === SIGN UP SECTION === -->
+                <div id="signup-section">
+                    <h1>Create your account</h1>
+                    <p class="subtitle">Prepare for a world-wide journey!</p>
+
+                    <p id="error-message" class="error-text hidden">Invalid credentials!</p>
+
+                    <form id="signupForm" action="#">
+                        <div class="input-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="email">Email address or phone number</label>
+                            <input type="text" id="email" name="email" maxlength="254" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" minlength="6" required>
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirm-password">Confirm password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="confirm-password" name="confirm-password" minlength="6" required>
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
+                        </div>
+
+                        <button type="submit" class="btn-signup">Sign Up</button>
+                    </form>
+
+                    <p class="login-text">Already have an account? <a href="#" id="show-login">Log In</a></p>
+                </div>
+
+                <!-- === LOG IN SECTION === -->
+                <div id="login-section" class="hidden">
+                    
+                    <h1 class="login-h1">Log In</h1>
+                    <p class="login-subtitle">Explore a world of possibilities</p>
+
+                    <p id="login-error-message" class="error-text hidden">Invalid credentials!</p>
+
+                    <form id="loginForm" action="#">
+                        <div class="input-group login-group">
+                            <label class="login-label" for="login-email">Email address or phone number</label>
+                            <input type="text" id="login-email" name="login-email" maxlength="254" required class="login-input">
+                        </div>
+
+                        <div class="input-group login-group">
+                            <label class="login-label" for="login-password">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="login-password" name="login-password" minlength="6" required class="login-input login-password-input">
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+                        
+                        <div class="forgot-password-container">
+                            <a href="#" class="forgot-password-link">Forgot Password</a>
+                        </div>
+
+                        <button type="submit" class="btn-login-new">Log In</button>
+                    </form>
+
+                    <p class="login-text" style="margin-top: 30px;">Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+                </div>
+
+            </div>
+            <div class="clouds-bg"></div>
+        </div>
+
+        <!-- Image Carousel Side -->
+        <div class="image-side">
+            <div class="carousel-container" id="carousel-box">
+                <div class="slide active" style="background-image: url('Images/GREECE.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/ITALY.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/JAPAN.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/NEWYORK.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/SWITZERLAND.jpg');"></div>
+
+                <button class="nav-arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+                <button class="nav-arrow next" onclick="changeSlide(1)">&#10095;</button>
+
+                <div class="carousel-dots">
+                    <span class="dot active" onclick="setSlide(0)"></span>
+                    <span class="dot" onclick="setSlide(1)"></span>
+                    <span class="dot" onclick="setSlide(2)"></span>
+                    <span class="dot" onclick="setSlide(3)"></span>
+                    <span class="dot" onclick="setSlide(4)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Screen Overlay -->
+    <div class="success-overlay hidden" id="successScreen">
+        <div class="success-box">
+            <div class="check-circle">
+                <svg viewBox="0 0 24 24" width="32" height="32" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>Registration successful!</h2>
+            <p>Congratulations on your first step to your<br>world-wide journey!</p>
+            <button class="btn-home" onclick="location.reload()">Back to Home</button>
+        </div>
+        <div class="clouds-bg"></div> 
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

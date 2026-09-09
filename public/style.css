@@ -18,7 +18,12 @@ body {
     width: 100vw;
 }
 
-/* --- Left Column: Form Side --- */
+/* This flips the layout so the photos are on the LEFT and the form is on the RIGHT during Log In */
+.split-layout.reverse-layout {
+    flex-direction: row-reverse;
+}
+
+/* --- Form Side --- */
 .form-side {
     flex: 1;
     display: flex;
@@ -32,7 +37,7 @@ body {
     width: 100%;
     max-width: 440px;
     padding: 40px;
-    z-index: 10; /* Keeps the form above the cloud background */
+    z-index: 10;
 }
 
 h1 {
@@ -44,7 +49,15 @@ h1 {
 .subtitle {
     color: #5b8db8;
     font-size: 14px;
-    margin-bottom: 30px;
+    margin-bottom: 15px; 
+}
+
+/* Error Message */
+.error-text {
+    color: #d93025; 
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 15px;
 }
 
 /* Inputs & Labels */
@@ -131,7 +144,7 @@ input[type="password"]:focus {
     background-color: #76bce0;
 }
 
-/* Footer Login Link */
+/* Footer Links */
 .login-text {
     text-align: center;
     margin-top: 25px;
@@ -149,6 +162,96 @@ input[type="password"]:focus {
     text-decoration: underline;
 }
 
+
+/* ==========================================================
+   EXACT STYLES FOR THE LOG IN SCREEN
+   ========================================================== */
+
+#login-section {
+    width: 100%;
+}
+
+.login-h1 {
+    text-align: left !important;
+    font-size: 32px !important;
+    color: #222 !important;
+    font-weight: bold !important;
+    margin-bottom: 5px !important;
+}
+
+.login-subtitle {
+    text-align: left !important;
+    color: #777 !important;
+    font-size: 14px !important;
+    margin-bottom: 35px !important;
+}
+
+.login-group {
+    margin-bottom: 22px !important;
+}
+
+.login-label {
+    text-align: left !important;
+    font-size: 13px !important;
+    color: #333 !important;
+    margin-bottom: 8px !important;
+}
+
+/* Wide light gray/blue inputs matching your target screenshot */
+.login-input {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    background-color: #dce7f0 !important; 
+    border: 1px solid #bdc9d6 !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+}
+
+.login-input:focus {
+    border-color: #89cbed !important;
+}
+
+.login-password-input {
+    letter-spacing: 2px;
+}
+
+/* Massive gap above the Log In button matching your target screenshot */
+#login-section .forgot-password-container {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 80px; 
+}
+
+#login-section .forgot-password-link {
+    color: #888;
+    font-size: 13px;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+#login-section .forgot-password-link:hover {
+    color: #444;
+}
+
+/* Wide Light Blue Log In Button matching your target screenshot */
+.btn-login-new {
+    width: 100%;
+    padding: 16px;
+    background-color: #83cdec; 
+    color: #222;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-login-new:hover {
+    background-color: #6bbde0;
+}
+/* ========================================================== */
+
 /* Decorative Clouds at Bottom */
 .clouds-bg {
     position: absolute;
@@ -156,18 +259,14 @@ input[type="password"]:focus {
     left: 0;
     width: 100%;
     height: 220px; 
-    /* Pointing to your new Images folder */
     background-image: url('Images/CLOUD.jpg'); 
-    
-    /* Forces the image to fit the container width and height exactly */
     background-size: 100% 100%; 
-    
     background-position: bottom center;
     background-repeat: no-repeat;
     z-index: 1;
 }
 
-/* --- Right Column: Image Carousel Side --- */
+/* --- Image Carousel Side --- */
 .image-side {
     flex: 1;
     position: relative;
@@ -245,4 +344,74 @@ input[type="password"]:focus {
 
 .dot.active, .dot:hover {
     background-color: rgba(255, 255, 255, 1);
+}
+
+/* --- SUCCESS SCREEN --- */
+.hidden {
+    display: none !important;
+}
+
+.success-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f8fbff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.success-box {
+    background-color: #e0f2fe;
+    padding: 50px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 440px;
+    width: 90%;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.check-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+}
+
+.success-box h2 {
+    font-size: 24px;
+    color: #111;
+    margin-bottom: 10px;
+}
+
+.success-box p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.btn-home {
+    width: 100%;
+    padding: 14px;
+    background-color: #aed9f0;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-home:hover {
+    background-color: #89cbed;
 }

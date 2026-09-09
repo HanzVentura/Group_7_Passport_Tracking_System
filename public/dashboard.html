@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Passport Tracking System</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: flex; height: 100vh; background-color: #f4f7fb; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: #fff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
+        .sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7; }
+        .profile-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .sidebar-header span { font-weight: bold; color: #111; font-size: 16px; }
+        
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+        .nav-links li a { text-decoration: none; color: #4a5568; font-size: 15px; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; transition: 0.2s; }
+        .nav-links li.active a, .nav-links li a:hover { color: #3182ce; background-color: #ebf8ff; font-weight: 500; }
+        
+        .logout-btn { margin-top: auto; color: #e53e3e !important; background-color: #fff5f5; }
+
+        /* Main Dashboard Area */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .dashboard-title { font-size: 26px; font-weight: bold; color: #1a202c; margin-bottom: 25px; }
+        
+        /* Welcome Banner */
+        .welcome-banner { background: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%); color: white; padding: 25px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15); }
+        .welcome-banner h2 { font-size: 24px; margin-bottom: 8px; }
+        .welcome-banner p { font-size: 14px; opacity: 0.9; }
+
+        /* Cards Grid */
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card h3 { font-size: 16px; color: #2d3748; margin-bottom: 20px; font-weight: 600; }
+        
+        /* Active Application Info */
+        .info-group { margin-bottom: 15px; font-size: 14px; color: #718096; }
+        .info-group span { display: block; font-weight: bold; color: #1a202c; margin-top: 4px; }
+        .status-processing { color: #3182ce; font-weight: bold; }
+
+        /* Timeline */
+        .timeline { display: flex; flex-direction: column; gap: 20px; position: relative; padding-left: 10px; }
+        .timeline-item { display: flex; align-items: center; gap: 15px; font-size: 14px; color: #2d3748; font-weight: 500; position: relative; }
+        .timeline-dot { width: 14px; height: 14px; background-color: #3182ce; border-radius: 50%; border: 3px solid #ebf8ff; z-index: 2; }
+        .timeline-line { position: absolute; left: 16px; top: 15px; width: 3px; height: 35px; background-color: #cbd5e0; }
+
+        /* Pending Action Box */
+        .pending-box { background-color: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 20px; font-size: 13px; color: #2b6cb0; line-height: 1.6; }
+        .pending-box strong { display: block; margin-bottom: 8px; color: #2c5282; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="profile-icon">&#128100;</div>
+            <span id="sidebarName">Loading...</span>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="#">Dashboard</a></li>
+            <li><a href="#">Payments</a></li>
+            <li><a href="#">Receipts</a></li>
+            <li><a href="#">Enquiries</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="/logout" class="logout-btn">Log Out</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 class="dashboard-title">DASHBOARD</h1>
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2 id="welcomeHeader">Good Day, User</h2>
+            <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="cards-grid">
+            <!-- Card 1: Active Application -->
+            <div class="card">
+                <h3>Active Application</h3>
+                <div class="info-group">Application ID<span>xxx - xxx - xxx</span></div>
+                <div class="info-group">Type<span>Renewal / Apply</span></div>
+                <div class="info-group">Current Status<span class="status-processing">Processing</span></div>
+                <div class="info-group" style="margin-bottom:0;">Submitted<span>30 Aug 2026</span></div>
+            </div>
+
+            <!-- Card 2: Application Status -->
+            <div class="card">
+                <h3>Application Status</h3>
+                <div class="timeline">
+                    <div class="timeline-item"><div class="timeline-dot"></div>Submitted<div class="timeline-line"></div></div>
+                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Payment<div class="timeline-line"></div></div>
+                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Under review<div class="timeline-line" style="background-color: #3182ce;"></div></div>
+                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Processing</div>
+                    <div class="timeline-item" style="margin-top: 15px; color: #a0aec0;"><div class="timeline-dot" style="background-color: #cbd5e0; border-color: #edf2f7;"></div>Ready to pick-up</div>
+                </div>
+            </div>
+
+            <!-- Card 3: Pending Action -->
+            <div class="card">
+                <h3>Pending Action</h3>
+                <div class="pending-box">
+                    <strong>Processing:</strong>
+                    You are expected to come on <strong>September 26, 2026 at 10:30 AM</strong> in Central Passport Office.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch logged-in user details from the backend server
+        fetch('/api/user-data')
+            .then(res => res.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    document.getElementById('sidebarName').textContent = data.fullname;
+                    document.getElementById('welcomeHeader').textContent = `Good Day, ${data.fullname}`;
+                } else {
+                    // If not logged in, kick them back to login page
+                    window.location.href = '/';
+                }
+            });
+    </script>
+</body>
+</html>
