@@ -3,356 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Passport Tracking</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background-color: #ffffff;
-            border-right: 1px solid #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 0;
-        }
-
-        .sidebar-top {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-profile-mini {
-            display: flex;
-            align-items: center;
-            padding: 0 20px 20px 20px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-
-        .user-profile-mini i {
-            font-size: 36px;
-            color: #3b82f6;
-            margin-right: 12px;
-        }
-
-        .user-info .name {
-            font-weight: 600;
-            font-size: 14px;
-            color: #1f2937;
-        }
-
-        .nav-links {
-            list-style: none;
-        }
-
-        .nav-links li a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #4b5563;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-links li.active a, .nav-links li a:hover {
-            background-color: #eff6ff;
-            color: #3b82f6;
-            border-right: 4px solid #3b82f6;
-        }
-
-        .nav-links li a i {
-            margin-right: 12px;
-            font-size: 16px;
-        }
-
-        .sidebar-bottom {
-            padding: 0 20px;
-        }
-
-        .sidebar-bottom a {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            color: #ef4444;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .sidebar-bottom a i {
-            margin-right: 12px;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .header {
-            background-color: #ffffff;
-            padding: 20px 30px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 20px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .dashboard-container {
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Welcome Banner */
-        .welcome-banner {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            padding: 25px 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15);
-        }
-
-        .welcome-banner h1 {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .welcome-banner p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        /* Top 3 Cards Grid */
-        .top-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        .card {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 220px;
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 20px;
-        }
-
-        /* Empty State Interior */
-        .empty-state-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            flex: 1;
-            margin: 10px 0;
-        }
-
-        .empty-state-content img, .empty-state-content i {
-            font-size: 38px;
-            color: #9ca3af;
-            margin-bottom: 12px;
-            height: 40px;
-            width: 40px;
-            object-fit: contain;
-        }
-
-        .empty-state-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #4b5563;
-            margin-bottom: 4px;
-        }
-
-        .empty-state-desc {
-            font-size: 12px;
-            color: #6b7280;
-            max-width: 220px;
-            line-height: 1.4;
-        }
-
-        /* Passport Application Type Section */
-        .selection-section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .selection-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .selection-card {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .selection-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .selection-card img {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 20px;
-            object-fit: contain;
-        }
-
-        .selection-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-
-        .selection-card p {
-            font-size: 13px;
-            color: #6b7280;
-            line-height: 1.5;
-        }
-    </style>
+    <title>Create Your Account / Log In</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-top">
-            <div class="user-profile-mini">
-                <i class="fa-solid fa-circle-user"></i>
-                <div class="user-info">
-                    <div class="name">Hanz Christian Ventura</div>
-                </div>
-            </div>
-            <ul class="nav-links">
-                <li class="active"><a href="#"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fa-solid fa-wallet"></i> Payments</a></li>
-                <li><a href="#"><i class="fa-solid fa-receipt"></i> Receipts</a></li>
-                <li><a href="#"><i class="fa-solid fa-circle-question"></i> Enquiries</a></li>
-                <li><a href="#"><i class="fa-solid fa-user"></i> Profile</a></li>
-                <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
-            </ul>
-        </div>
-        <div class="sidebar-bottom">
-            <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
-        </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <div class="header">DASHBOARD</div>
+    <div class="split-layout" id="mainLayout">
         
-        <div class="dashboard-container">
-            <!-- Welcome Banner -->
-            <div class="welcome-banner">
-                <h1>Good Day, Hanz Christian Ventura</h1>
-                <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
+        <!-- Form Side -->
+        <div class="form-side">
+            <div class="form-container">
+                
+                <!-- === SIGN UP SECTION === -->
+                <div id="signup-section">
+                    <h1>Create your account</h1>
+                    <p class="subtitle">Prepare for a world-wide journey!</p>
+
+                    <p id="error-message" class="error-text hidden">Invalid credentials!</p>
+
+                    <form id="signupForm" action="#">
+                        <div class="input-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="email">Email address or phone number</label>
+                            <input type="text" id="email" name="email" maxlength="254" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" minlength="6" required>
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirm-password">Confirm password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="confirm-password" name="confirm-password" minlength="6" required>
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to the Terms of Service and Privacy Policy</label>
+                        </div>
+
+                        <button type="submit" class="btn-signup">Sign Up</button>
+                    </form>
+
+                    <p class="login-text">Already have an account? <a href="#" id="show-login">Log In</a></p>
+                </div>
+
+                <!-- === LOG IN SECTION === -->
+                <div id="login-section" class="hidden">
+                    
+                    <h1 class="login-h1">Log In</h1>
+                    <p class="login-subtitle">Explore a world of possibilities</p>
+
+                    <p id="login-error-message" class="error-text hidden">Invalid credentials!</p>
+
+                    <form id="loginForm" action="#">
+                        <div class="input-group login-group">
+                            <label class="login-label" for="login-email">Email address or phone number</label>
+                            <input type="text" id="login-email" name="login-email" maxlength="254" required class="login-input">
+                        </div>
+
+                        <div class="input-group login-group">
+                            <label class="login-label" for="login-password">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="login-password" name="login-password" minlength="6" required class="login-input login-password-input">
+                                <span class="show-password">Show Password</span>
+                            </div>
+                        </div>
+                        
+                        <div class="forgot-password-container">
+                            <a href="#" class="forgot-password-link">Forgot Password</a>
+                        </div>
+
+                        <button type="submit" class="btn-login-new">Log In</button>
+                    </form>
+
+                    <p class="login-text" style="margin-top: 30px;">Don't have an account? <a href="#" id="show-signup">Sign Up</a></p>
+                </div>
+
             </div>
+            <div class="clouds-bg"></div>
+        </div>
 
-            <!-- Top Cards Grid (Empty States) -->
-            <div class="top-cards-grid">
-                <!-- Active Application Card -->
-                <div class="card">
-                    <div class="card-title">Active Application</div>
-                    <div class="empty-state-content">
-                        <i class="fa-regular fa-file-lines"></i>
-                        <div class="empty-state-title">No Active Application</div>
-                        <div class="empty-state-desc">Select an application type below to begin your process.</div>
-                    </div>
-                </div>
+        <!-- Image Carousel Side -->
+        <div class="image-side">
+            <div class="carousel-container" id="carousel-box">
+                <div class="slide active" style="background-image: url('Images/GREECE.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/ITALY.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/JAPAN.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/NEWYORK.jpg');"></div>
+                <div class="slide" style="background-image: url('Images/SWITZERLAND.jpg');"></div>
 
-                <!-- Application Status Card -->
-                <div class="card">
-                    <div class="card-title">Application Status</div>
-                    <div class="empty-state-content">
-                        <i class="fa-regular fa-file-lines"></i>
-                        <div class="empty-state-title">Not Started</div>
-                        <div class="empty-state-desc">Application progress will be tracked here once submitted.</div>
-                    </div>
-                </div>
+                <button class="nav-arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+                <button class="nav-arrow next" onclick="changeSlide(1)">&#10095;</button>
 
-                <!-- Pending Action Card -->
-                <div class="card">
-                    <div class="card-title">Pending Action</div>
-                    <div class="empty-state-content">
-                        <i class="fa-regular fa-calendar"></i>
-                        <div class="empty-state-title">All Clear</div>
-                        <div class="empty-state-desc">No upcoming appointments or tasks at this time.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Passport Application Type Selection -->
-            <div class="selection-section-title">Passport Application Type</div>
-            <div class="selection-grid">
-                <!-- New Passport Option -->
-                <div class="selection-card" onclick="selectType('new')">
-                    <i class="fa-solid fa-globe" style="font-size: 48px; color: #3b82f6; margin-bottom: 20px;"></i>
-                    <h3>New Passport</h3>
-                    <p>First-time application or replacement of a lost/damaged passport.</p>
-                </div>
-
-                <!-- Passport Renewal Option -->
-                <div class="selection-card" onclick="selectType('renewal')">
-                    <i class="fa-solid fa-passport" style="font-size: 48px; color: #3b82f6; margin-bottom: 20px;"></i>
-                    <h3>Passport Renewal</h3>
-                    <p>Apply to renew an existing passport that has expired or is about to expire.</p>
+                <div class="carousel-dots">
+                    <span class="dot active" onclick="setSlide(0)"></span>
+                    <span class="dot" onclick="setSlide(1)"></span>
+                    <span class="dot" onclick="setSlide(2)"></span>
+                    <span class="dot" onclick="setSlide(3)"></span>
+                    <span class="dot" onclick="setSlide(4)"></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function selectType(type) {
-            console.log("Selected application type:", type);
-            // Add your dynamic routing or form launch logic here
-        }
-    </script>
+    <!-- Success Screen Overlay -->
+    <div class="success-overlay hidden" id="successScreen">
+        <div class="success-box">
+            <div class="check-circle">
+                <svg viewBox="0 0 24 24" width="32" height="32" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>Registration successful!</h2>
+            <p>Congratulations on your first step to your<br>world-wide journey!</p>
+            <button class="btn-home" onclick="location.reload()">Back to Home</button>
+        </div>
+        <div class="clouds-bg"></div> 
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
