@@ -168,7 +168,7 @@
             font-size: 15px;
             font-weight: 600;
             color: #374151;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         /* Empty State Interior */
@@ -495,32 +495,61 @@
 
             <!-- ================= VIEW 1: DASHBOARD ================= -->
             <div id="dashboardView" class="app-view active-view">
-                <!-- Top Cards Grid (Empty States) -->
+                <!-- Top Cards Grid -->
                 <div class="top-cards-grid">
-                    <div class="card">
+                    <!-- Card 1: Active Application -->
+                    <div class="card" id="cardActiveApp">
                         <div class="card-title">Active Application</div>
-                        <div class="empty-state-content">
+                        <div class="empty-state-content" id="activeAppDefault">
                             <i class="fa-regular fa-file-lines"></i>
                             <div class="empty-state-title">No Active Application</div>
                             <div class="empty-state-desc">Select an application type below to begin your process.</div>
                         </div>
+                        <div id="activeAppFilled" style="display: none; font-size: 13px; line-height: 1.6;">
+                            <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Application ID</div>
+                            <div id="dispAppId" style="font-weight: 700; color: #1f2937; margin-bottom: 8px;">---</div>
+                            
+                            <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Type</div>
+                            <div id="dispAppType" style="font-weight: 700; color: #1f2937; margin-bottom: 8px;">New First-Time Application</div>
+                            
+                            <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Current Status</div>
+                            <div style="font-weight: 700; color: #2563eb; margin-bottom: 8px;">Processing</div>
+                            
+                            <div style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Submitted</div>
+                            <div id="dispSubDate" style="font-weight: 600; color: #1f2937;">---</div>
+                        </div>
                     </div>
 
+                    <!-- Card 2: Application Status -->
                     <div class="card">
                         <div class="card-title">Application Status</div>
-                        <div class="empty-state-content">
+                        <div class="empty-state-content" id="statusAppDefault">
                             <i class="fa-regular fa-file-lines"></i>
                             <div class="empty-state-title">Not Started</div>
                             <div class="empty-state-desc">Application progress will be tracked here once submitted.</div>
                         </div>
+                        <div id="statusAppFilled" style="display: none; font-size: 12px; justify-content: center; flex: 1; flex-direction: column;">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;"><i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 8px; font-size: 14px;"></i> Submitted</div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;"><i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 8px; font-size: 14px;"></i> Payment</div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;"><i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 8px; font-size: 14px;"></i> Under review</div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;"><i class="fa-solid fa-circle-check" style="color: #10b981; margin-right: 8px; font-size: 14px;"></i> Processing</div>
+                            <div style="display: flex; align-items: center; color: #9ca3af;"><i class="fa-solid fa-circle" style="font-size: 8px; margin-right: 11px; margin-left: 3px;"></i> Ready to pick-up</div>
+                        </div>
                     </div>
 
+                    <!-- Card 3: Pending Action -->
                     <div class="card">
                         <div class="card-title">Pending Action</div>
-                        <div class="empty-state-content">
+                        <div class="empty-state-content" id="pendingAppDefault">
                             <i class="fa-regular fa-calendar"></i>
                             <div class="empty-state-title">All Clear</div>
                             <div class="empty-state-desc">No upcoming appointments or tasks at this time.</div>
+                        </div>
+                        <div id="pendingAppFilled" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; font-size: 12px; color: #1e40af; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <strong style="display: block; margin-bottom: 4px;">Processing:</strong>
+                            <span>You are expected to come on</span>
+                            <strong id="dispComeDate" style="display: block; margin: 4px 0; color: #1d4ed8; font-size: 13px;">---</strong>
+                            <span style="font-size: 11px; color: #6b7280;">in Central Passport Office.</span>
                         </div>
                     </div>
                 </div>
@@ -568,22 +597,21 @@
                         <div class="section-subtitle">To proceed with your New Passport application, please specify the exact service you require.</div>
                         
                         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-                            <div class="selection-card selected" id="catFirstTime" onclick="setCategory('first-time')">
+                            <div class="selection-card" onclick="goToWizardStep(2)">
                                 <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
                                 <h3>New First-Time Application</h3>
                                 <p>For applicants who have never been issued a Philippine ePassport.</p>
                             </div>
-                            <div class="selection-card" id="catReplacement" onclick="setCategory('replacement')">
-                                <i class="fa-solid fa-passport" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
-                                <h3>Lost/Damaged Passport Replacement</h3>
-                                <p>For replacing a valid ePassport that has been lost or severely damaged.</p>
+                            <div class="selection-card" onclick="alert('Lost/Damaged Passport Replacement is coming soon.')">
+                                <i class="fa-solid fa-passport" style="font-size: 42px; color: #9ca3af; margin-bottom: 16px;"></i>
+                                <h3 style="color: #4b5563;">Lost/Damaged Passport Replacement</h3>
+                                <p>For replacing a valid ePassport that has been lost or severely damaged. (Coming Soon)</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="switchView('dashboard')">Back to Dashboard</button>
-                        <button type="button" class="btn-primary" onclick="goToWizardStep(2)">Save & Continue</button>
                     </div>
                 </div>
 
@@ -596,26 +624,37 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>ID Document Type</label>
-                                <select class="form-control">
-                                    <option>Driver's License</option>
-                                    <option>State-issued Non-Driver ID Card</option>
-                                    <option>Military ID Card</option>
-                                    <option>Voter's ID</option>
+                                <select class="form-control" id="idType">
+                                    <option>Philippine Identification (PhilID / National ID / ePhilID)</option>
+                                    <option>LTO Driver's License</option>
+                                    <option>Unified Multi-Purpose ID (UMID / SSS ID)</option>
+                                    <option>Professional Regulation Commission (PRC) ID</option>
+                                    <option>Philippine Postal ID (Improved)</option>
+                                    <option>COMELEC Voter's ID or Voter's Certification</option>
+                                    <option>GSIS e-Card</option>
+                                    <option>Overseas Workers Welfare Administration (OWWA) E-Card</option>
+                                    <option>Senior Citizen ID</option>
+                                    <option>Persons with Disabilities (PWD) ID</option>
+                                    <option>Police Clearance / PNP Permit to Carry Firearms</option>
+                                    <option>School ID (for students)</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>ID Number</label>
-                                <input type="text" class="form-control" placeholder="Enter ID Number">
+                                <input type="text" class="form-control" id="idNumber" placeholder="Enter ID Number">
                             </div>
                             <div class="form-group">
                                 <label>Date of Expiry</label>
-                                <input type="date" class="form-control">
+                                <input type="date" class="form-control" id="idExpiry">
                             </div>
                         </div>
 
                         <div class="upload-box">
-                            <button type="button" class="btn-upload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
-                            <span class="upload-file-name">No file selected (Max 5MB)</span>
+                            <label class="btn-upload" style="cursor: pointer;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+                                <input type="file" id="idFile" style="display: none;" onchange="updateFileName('idFile', 'idFileName')">
+                            </label>
+                            <span class="upload-file-name" id="idFileName">No file selected (Max 5MB)</span>
                         </div>
                     </div>
 
@@ -626,30 +665,33 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Document Type</label>
-                                <select class="form-control">
+                                <select class="form-control" id="citType">
                                     <option>Birth Certificate (PSA)</option>
                                     <option>Certificate of Naturalization</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label>Certificate Number</label>
-                                <input type="text" class="form-control" placeholder="Certificate / Barcode No.">
+                                <input type="text" class="form-control" id="citNumber" placeholder="Certificate / Barcode No.">
                             </div>
                             <div class="form-group">
                                 <label>Date of Registration</label>
-                                <input type="date" class="form-control">
+                                <input type="date" class="form-control" id="citDate">
                             </div>
                         </div>
 
                         <div class="upload-box">
-                            <button type="button" class="btn-upload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
-                            <span class="upload-file-name">No file selected</span>
+                            <label class="btn-upload" style="cursor: pointer;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
+                                <input type="file" id="citFile" style="display: none;" onchange="updateFileName('citFile', 'citFileName')">
+                            </label>
+                            <span class="upload-file-name" id="citFileName">No file selected</span>
                         </div>
                     </div>
 
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="goToWizardStep(1)">Back</button>
-                        <button type="button" class="btn-primary" onclick="goToWizardStep(3)">Save & Continue</button>
+                        <button type="button" class="btn-primary" onclick="validateAndProceed()">Save & Continue</button>
                     </div>
                 </div>
 
@@ -665,7 +707,7 @@
                                 <p style="margin-bottom: 6px;"><strong>Category:</strong> New First-Time Application</p>
                             </div>
                             <div>
-                                <p style="margin-bottom: 6px;"><strong>Primary ID:</strong> Driver's License</p>
+                                <p style="margin-bottom: 6px;"><strong>Primary ID:</strong> <span id="summaryIdType">Government-Issued ID</span></p>
                                 <p style="margin-bottom: 6px;"><strong>Citizenship Proof:</strong> PSA Birth Certificate</p>
                             </div>
                         </div>
@@ -689,7 +731,7 @@
 
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="goToWizardStep(2)">Back</button>
-                        <button type="button" class="btn-primary" onclick="alert('Payment Gateway Simulated Successfully!')">Pay Now (₱1,100.00)</button>
+                        <button type="button" class="btn-primary" onclick="completePayment()">Pay Now (₱1,100.00)</button>
                     </div>
                 </div>
             </div>
@@ -720,14 +762,75 @@
             goToWizardStep(1);
         }
 
-        function setCategory(type) {
-            document.getElementById('catFirstTime').classList.remove('selected');
-            document.getElementById('catReplacement').classList.remove('selected');
-            if(type === 'first-time') {
-                document.getElementById('catFirstTime').classList.add('selected');
+        function updateFileName(inputId, nameId) {
+            const fileInput = document.getElementById(inputId);
+            const fileNameSpan = document.getElementById(nameId);
+            if (fileInput.files.length > 0) {
+                fileNameSpan.innerText = fileInput.files[0].name;
+                fileNameSpan.style.color = '#10b981';
             } else {
-                document.getElementById('catReplacement').classList.add('selected');
+                fileNameSpan.innerText = "No file selected";
+                fileNameSpan.style.color = '#6b7280';
             }
+        }
+
+        function validateAndProceed() {
+            const idNumber = document.getElementById('idNumber').value.trim();
+            const idExpiry = document.getElementById('idExpiry').value;
+            const idFile = document.getElementById('idFile').files.length;
+
+            const citNumber = document.getElementById('citNumber').value.trim();
+            const citDate = document.getElementById('citDate').value;
+            const citFile = document.getElementById('citFile').files.length;
+
+            if (!idNumber || !idExpiry || idFile === 0) {
+                alert("Please complete all fields and attach a photo/document for Proof of Identity.");
+                return;
+            }
+
+            if (!citNumber || !citDate || citFile === 0) {
+                alert("Please complete all fields and attach a photo/document for Proof of Philippine Citizenship.");
+                return;
+            }
+
+            const selectedIdDropdown = document.getElementById('idType');
+            document.getElementById('summaryIdType').innerText = selectedIdDropdown.options[selectedIdDropdown.selectedIndex].text;
+
+            goToWizardStep(3);
+        }
+
+        function completePayment() {
+            // Generate Unique Application ID (e.g. PH-849201)
+            const randomId = 'PH-' + Math.floor(100000 + Math.random() * 900000);
+
+            // Format current submission date (e.g., "10 Sep 2026")
+            const now = new Date();
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            const subDateFormatted = now.toLocaleDateString('en-GB', options);
+
+            // Calculate expected visit date (+7 days)
+            const visitDate = new Date(now);
+            visitDate.setDate(now.getDate() + 7);
+            const visitDateFormatted = visitDate.toLocaleDateString('en-GB', options) + " at 10:30 AM";
+
+            // Inject dynamic text into Dashboard cards
+            document.getElementById('dispAppId').innerText = randomId;
+            document.getElementById('dispSubDate').innerText = subDateFormatted;
+            document.getElementById('dispComeDate').innerText = visitDateFormatted;
+
+            // Switch to Dashboard View and swap card empty states with populated tracking layouts
+            switchView('dashboard');
+
+            document.getElementById('activeAppDefault').style.display = 'none';
+            document.getElementById('activeAppFilled').style.display = 'block';
+
+            document.getElementById('statusAppDefault').style.display = 'none';
+            document.getElementById('statusAppFilled').style.display = 'flex';
+
+            document.getElementById('pendingAppDefault').style.display = 'none';
+            document.getElementById('pendingAppFilled').style.display = 'flex';
+
+            alert('Payment Gateway Simulated Successfully! Your application has been submitted.');
         }
 
         function goToWizardStep(stepNo) {
