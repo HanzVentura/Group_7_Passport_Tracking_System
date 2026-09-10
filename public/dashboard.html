@@ -3,129 +3,757 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Passport Tracking System</title>
+    <title>Dashboard - Passport Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { display: flex; height: 100vh; background-color: #f4f7fb; overflow: hidden; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
         /* Sidebar */
-        .sidebar { width: 260px; background-color: #fff; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px; }
-        .sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7; }
-        .profile-icon { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        .sidebar-header span { font-weight: bold; color: #111; font-size: 16px; }
-        
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 15px; }
-        .nav-links li a { text-decoration: none; color: #4a5568; font-size: 15px; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; transition: 0.2s; }
-        .nav-links li.active a, .nav-links li a:hover { color: #3182ce; background-color: #ebf8ff; font-weight: 500; }
-        
-        .logout-btn { margin-top: auto; color: #e53e3e !important; background-color: #fff5f5; }
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
 
-        /* Main Dashboard Area */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .dashboard-title { font-size: 26px; font-weight: bold; color: #1a202c; margin-bottom: 25px; }
-        
+        .sidebar-top {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-profile-mini {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .user-profile-mini i {
+            font-size: 36px;
+            color: #3b82f6;
+            margin-right: 12px;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links li.active a, .nav-links li a:hover {
+            background-color: #eff6ff;
+            color: #3b82f6;
+            border-right: 4px solid #3b82f6;
+        }
+
+        .nav-links li a i {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            padding: 0 20px;
+        }
+
+        .sidebar-bottom a {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-bottom a i {
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .dashboard-container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
         /* Welcome Banner */
-        .welcome-banner { background: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%); color: white; padding: 25px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15); }
-        .welcome-banner h2 { font-size: 24px; margin-bottom: 8px; }
-        .welcome-banner p { font-size: 14px; opacity: 0.9; }
+        .welcome-banner {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.15);
+        }
 
-        /* Cards Grid */
-        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .card h3 { font-size: 16px; color: #2d3748; margin-bottom: 20px; font-weight: 600; }
-        
-        /* Active Application Info */
-        .info-group { margin-bottom: 15px; font-size: 14px; color: #718096; }
-        .info-group span { display: block; font-weight: bold; color: #1a202c; margin-top: 4px; }
-        .status-processing { color: #3182ce; font-weight: bold; }
+        .welcome-banner h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
 
-        /* Timeline */
-        .timeline { display: flex; flex-direction: column; gap: 20px; position: relative; padding-left: 10px; }
-        .timeline-item { display: flex; align-items: center; gap: 15px; font-size: 14px; color: #2d3748; font-weight: 500; position: relative; }
-        .timeline-dot { width: 14px; height: 14px; background-color: #3182ce; border-radius: 50%; border: 3px solid #ebf8ff; z-index: 2; }
-        .timeline-line { position: absolute; left: 16px; top: 15px; width: 3px; height: 35px; background-color: #cbd5e0; }
+        .welcome-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
 
-        /* Pending Action Box */
-        .pending-box { background-color: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 20px; font-size: 13px; color: #2b6cb0; line-height: 1.6; }
-        .pending-box strong { display: block; margin-bottom: 8px; color: #2c5282; font-size: 14px; }
+        /* Top 3 Cards Grid */
+        .top-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 20px;
+        }
+
+        /* Empty State Interior */
+        .empty-state-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+            margin: 10px 0;
+        }
+
+        .empty-state-content i {
+            font-size: 32px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+            height: 35px;
+            width: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        .empty-state-desc {
+            font-size: 12px;
+            color: #6b7280;
+            max-width: 220px;
+            line-height: 1.4;
+        }
+
+        /* Passport Application Type Section */
+        .selection-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .selection-card {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .selection-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .selection-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .selection-card p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* Wizard Steps Progress Bar */
+        .wizard-steps {
+            display: flex;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            color: #9ca3af;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .wizard-step.active {
+            color: #2563eb;
+        }
+
+        .wizard-step.completed {
+            color: #10b981;
+        }
+
+        .wizard-step .step-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .wizard-step.active .step-badge {
+            background: #2563eb;
+            color: white;
+        }
+
+        .wizard-step.completed .step-badge {
+            background: #10b981;
+            color: white;
+        }
+
+        .wizard-divider {
+            flex: 1;
+            height: 2px;
+            background: #e5e7eb;
+            margin: 0 15px;
+        }
+
+        /* Form Card Containers */
+        .form-section-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .form-row.two-col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1f2937;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .upload-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 12px;
+            background: #f9fafb;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .btn-upload {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-upload:hover {
+            background-color: #2563eb;
+        }
+
+        .upload-file-name {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* Action Buttons Bottom */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .btn-secondary {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        /* View State Management */
+        .app-view {
+            display: none;
+        }
+        .app-view.active-view {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="profile-icon">&#128100;</div>
-            <span id="sidebarName">Loading...</span>
+        <div class="sidebar-top">
+            <div class="user-profile-mini">
+                <i class="fa-solid fa-circle-user"></i>
+                <div class="user-info">
+                    <div class="name">Hanz Christian Ventura</div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-wallet"></i> Payments</a></li>
+                <li><a href="#"><i class="fa-solid fa-receipt"></i> Receipts</a></li>
+                <li><a href="#"><i class="fa-solid fa-circle-question"></i> Enquiries</a></li>
+                <li><a href="#"><i class="fa-solid fa-user"></i> Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li class="active"><a href="#">Dashboard</a></li>
-            <li><a href="#">Payments</a></li>
-            <li><a href="#">Receipts</a></li>
-            <li><a href="#">Enquiries</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="/logout" class="logout-btn">Log Out</a></li>
-        </ul>
+        <div class="sidebar-bottom">
+            <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+        </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="main-content">
-        <h1 class="dashboard-title">DASHBOARD</h1>
-
-        <!-- Welcome Banner -->
-        <div class="welcome-banner">
-            <h2 id="welcomeHeader">Good Day, User</h2>
-            <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
-        </div>
-
-        <!-- Cards Section -->
-        <div class="cards-grid">
-            <!-- Card 1: Active Application -->
-            <div class="card">
-                <h3>Active Application</h3>
-                <div class="info-group">Application ID<span>xxx - xxx - xxx</span></div>
-                <div class="info-group">Type<span>Renewal / Apply</span></div>
-                <div class="info-group">Current Status<span class="status-processing">Processing</span></div>
-                <div class="info-group" style="margin-bottom:0;">Submitted<span>30 Aug 2026</span></div>
+        <div class="header" id="pageHeaderTitle">DASHBOARD</div>
+        
+        <div class="dashboard-container">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <h1>Good Day, Hanz Christian Ventura</h1>
+                <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
             </div>
 
-            <!-- Card 2: Application Status -->
-            <div class="card">
-                <h3>Application Status</h3>
-                <div class="timeline">
-                    <div class="timeline-item"><div class="timeline-dot"></div>Submitted<div class="timeline-line"></div></div>
-                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Payment<div class="timeline-line"></div></div>
-                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Under review<div class="timeline-line" style="background-color: #3182ce;"></div></div>
-                    <div class="timeline-item" style="margin-top: 15px;"><div class="timeline-dot"></div>Processing</div>
-                    <div class="timeline-item" style="margin-top: 15px; color: #a0aec0;"><div class="timeline-dot" style="background-color: #cbd5e0; border-color: #edf2f7;"></div>Ready to pick-up</div>
+            <!-- ================= VIEW 1: DASHBOARD ================= -->
+            <div id="dashboardView" class="app-view active-view">
+                <!-- Top Cards Grid (Empty States) -->
+                <div class="top-cards-grid">
+                    <div class="card">
+                        <div class="card-title">Active Application</div>
+                        <div class="empty-state-content">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <div class="empty-state-title">No Active Application</div>
+                            <div class="empty-state-desc">Select an application type below to begin your process.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Application Status</div>
+                        <div class="empty-state-content">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <div class="empty-state-title">Not Started</div>
+                            <div class="empty-state-desc">Application progress will be tracked here once submitted.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Pending Action</div>
+                        <div class="empty-state-content">
+                            <i class="fa-regular fa-calendar"></i>
+                            <div class="empty-state-title">All Clear</div>
+                            <div class="empty-state-desc">No upcoming appointments or tasks at this time.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passport Application Type Section -->
+                <div class="selection-section-title">Passport Application Type</div>
+                <div class="selection-grid">
+                    <div class="selection-card" onclick="startApplication()">
+                        <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
+                        <h3>New Passport</h3>
+                        <p>First-time application or replacement of a lost/damaged passport.</p>
+                    </div>
+
+                    <div class="selection-card" onclick="alert('Passport Renewal flow coming soon.')">
+                        <i class="fa-solid fa-passport" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
+                        <h3>Passport Renewal</h3>
+                        <p>Apply to renew an existing passport that has expired or is about to expire.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Card 3: Pending Action -->
-            <div class="card">
-                <h3>Pending Action</h3>
-                <div class="pending-box">
-                    <strong>Processing:</strong>
-                    You are expected to come on <strong>September 26, 2026 at 10:30 AM</strong> in Central Passport Office.
+            <!-- ================= VIEW 2: MULTI-STEP APPLICATION WIZARD ================= -->
+            <div id="wizardView" class="app-view">
+                <div class="wizard-steps">
+                    <div class="wizard-step active" id="wStep1">
+                        <div class="step-badge">1</div>
+                        <span>Application Category</span>
+                    </div>
+                    <div class="wizard-divider"></div>
+                    <div class="wizard-step" id="wStep2">
+                        <div class="step-badge">2</div>
+                        <span>Document Upload</span>
+                    </div>
+                    <div class="wizard-divider"></div>
+                    <div class="wizard-step" id="wStep3">
+                        <div class="step-badge">3</div>
+                        <span>Review & Payment</span>
+                    </div>
+                </div>
+
+                <!-- STEP 1 CONTENT -->
+                <div class="step-pane active-pane" id="pane1">
+                    <div class="form-section-card">
+                        <div class="section-title">Select Application Category</div>
+                        <div class="section-subtitle">To proceed with your New Passport application, please specify the exact service you require.</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
+                            <div class="selection-card selected" id="catFirstTime" onclick="setCategory('first-time')">
+                                <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
+                                <h3>New First-Time Application</h3>
+                                <p>For applicants who have never been issued a Philippine ePassport.</p>
+                            </div>
+                            <div class="selection-card" id="catReplacement" onclick="setCategory('replacement')">
+                                <i class="fa-solid fa-passport" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
+                                <h3>Lost/Damaged Passport Replacement</h3>
+                                <p>For replacing a valid ePassport that has been lost or severely damaged.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="switchView('dashboard')">Back to Dashboard</button>
+                        <button type="button" class="btn-primary" onclick="goToWizardStep(2)">Save & Continue</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2 CONTENT -->
+                <div class="step-pane" id="pane2" style="display:none;">
+                    <div class="form-section-card">
+                        <div class="section-title">Proof of Identity (Primary)</div>
+                        <div class="section-subtitle">Please upload at least one (1) valid primary government-issued ID.</div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ID Document Type</label>
+                                <select class="form-control">
+                                    <option>Driver's License</option>
+                                    <option>State-issued Non-Driver ID Card</option>
+                                    <option>Military ID Card</option>
+                                    <option>Voter's ID</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>ID Number</label>
+                                <input type="text" class="form-control" placeholder="Enter ID Number">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Expiry</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="upload-box">
+                            <button type="button" class="btn-upload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
+                            <span class="upload-file-name">No file selected (Max 5MB)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-section-card">
+                        <div class="section-title">Proof of Philippine Citizenship</div>
+                        <div class="section-subtitle">A clear, scanned copy of your birth certificate is mandatory for first-time applicants.</div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Document Type</label>
+                                <select class="form-control">
+                                    <option>Birth Certificate (PSA)</option>
+                                    <option>Certificate of Naturalization</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Certificate Number</label>
+                                <input type="text" class="form-control" placeholder="Certificate / Barcode No.">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Registration</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="upload-box">
+                            <button type="button" class="btn-upload"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</button>
+                            <span class="upload-file-name">No file selected</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="goToWizardStep(1)">Back</button>
+                        <button type="button" class="btn-primary" onclick="goToWizardStep(3)">Save & Continue</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3 CONTENT -->
+                <div class="step-pane" id="pane3" style="display:none;">
+                    <div class="form-section-card">
+                        <div class="section-title">Applicant Summary & Fee Review</div>
+                        <div class="section-subtitle">Review your details before payment.</div>
+                        
+                        <div class="form-row two-col" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-size: 14px;">
+                            <div>
+                                <p style="margin-bottom: 6px;"><strong>Full Name:</strong> Hanz Christian Ventura</p>
+                                <p style="margin-bottom: 6px;"><strong>Category:</strong> New First-Time Application</p>
+                            </div>
+                            <div>
+                                <p style="margin-bottom: 6px;"><strong>Primary ID:</strong> Driver's License</p>
+                                <p style="margin-bottom: 6px;"><strong>Citizenship Proof:</strong> PSA Birth Certificate</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section-card">
+                        <div class="section-title">Fee Summary</div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px;">
+                            <span>Passport Application Fee</span>
+                            <span>₱950.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px;">
+                            <span>Courier Fee (Optional)</span>
+                            <span>₱150.00</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 16px; font-weight: 700;">
+                            <span>Total Amount</span>
+                            <span style="color: #2563eb;">₱1,100.00</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="goToWizardStep(2)">Back</button>
+                        <button type="button" class="btn-primary" onclick="alert('Payment Gateway Simulated Successfully!')">Pay Now (₱1,100.00)</button>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
-        // Fetch logged-in user details from the backend server
-        fetch('/api/user-data')
-            .then(res => res.json())
-            .then(data => {
-                if (data.loggedIn) {
-                    document.getElementById('sidebarName').textContent = data.fullname;
-                    document.getElementById('welcomeHeader').textContent = `Good Day, ${data.fullname}`;
-                } else {
-                    // If not logged in, kick them back to login page
-                    window.location.href = '/';
-                }
-            });
+        function switchView(viewName) {
+            const dashboardView = document.getElementById('dashboardView');
+            const wizardView = document.getElementById('wizardView');
+            const headerTitle = document.getElementById('pageHeaderTitle');
+
+            if(viewName === 'dashboard') {
+                dashboardView.classList.add('active-view');
+                wizardView.classList.remove('active-view');
+                headerTitle.innerText = "DASHBOARD";
+            } else if(viewName === 'wizard') {
+                dashboardView.classList.remove('active-view');
+                wizardView.classList.add('active-view');
+                headerTitle.innerText = "NEW PASSPORT APPLICATION";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startApplication() {
+            switchView('wizard');
+            goToWizardStep(1);
+        }
+
+        function setCategory(type) {
+            document.getElementById('catFirstTime').classList.remove('selected');
+            document.getElementById('catReplacement').classList.remove('selected');
+            if(type === 'first-time') {
+                document.getElementById('catFirstTime').classList.add('selected');
+            } else {
+                document.getElementById('catReplacement').classList.add('selected');
+            }
+        }
+
+        function goToWizardStep(stepNo) {
+            document.getElementById('pane1').style.display = 'none';
+            document.getElementById('pane2').style.display = 'none';
+            document.getElementById('pane3').style.display = 'none';
+
+            document.getElementById('wStep1').className = 'wizard-step';
+            document.getElementById('wStep2').className = 'wizard-step';
+            document.getElementById('wStep3').className = 'wizard-step';
+
+            if(stepNo === 1) {
+                document.getElementById('pane1').style.display = 'block';
+                document.getElementById('wStep1').classList.add('active');
+            } else if(stepNo === 2) {
+                document.getElementById('pane2').style.display = 'block';
+                document.getElementById('wStep1').classList.add('completed');
+                document.getElementById('wStep2').classList.add('active');
+            } else if(stepNo === 3) {
+                document.getElementById('pane3').style.display = 'block';
+                document.getElementById('wStep1').classList.add('completed');
+                document.getElementById('wStep2').classList.add('completed');
+                document.getElementById('wStep3').classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
