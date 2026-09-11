@@ -147,37 +147,21 @@ const loginEmailInput = document.getElementById('login-email');
 loginEmailInput.addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
 document.getElementById('login-password').addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
 
-loginForm.addEventListener('submit', async function(event) {
+function handleLoginSubmit(event) {
     event.preventDefault();
 
-    const emailVal = loginEmailInput.value.trim();
-    const password = document.getElementById('login-password').value;
+    const emailInput = document.getElementById('login-email').value.trim();
+    const passInput = document.getElementById('login-password').value;
+    localStorage.setItem('userEmail', emailInput);
 
-    if (!emailRegex.test(emailVal) && !phoneRegex.test(emailVal)) {
-        loginErrorMessage.textContent = "Invalid credentials!";
-        loginErrorMessage.classList.remove('hidden');
+    if (emailInput === 'hanzchristian.ventura@neu.edu.ph' && passInput === 'hanzchristian.ventura@neu.edu.ph') {
+        localStorage.setItem('userRole', 'admin');
+        window.location.href = 'admin.html';
         return;
     }
 
-    try {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailVal, password })
-        });
+    localStorage.setItem('userRole', 'member');
+    window.location.href = 'dashboard.html';
+}
 
-        const result = await response.json();
-
-        if (result.success) {
-            loginErrorMessage.classList.add('hidden');
-            // Redirect straight to your group's custom dashboard!
-            window.location.href = '/dashboard.html';
-        } else {
-            loginErrorMessage.textContent = result.message;
-            loginErrorMessage.classList.remove('hidden');
-        }
-    } catch (err) {
-        loginErrorMessage.textContent = "Connection error. Make sure server is running.";
-        loginErrorMessage.classList.remove('hidden');
-    }
-});
+loginForm.addEventListener('submit', handleLoginSubmit);

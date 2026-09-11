@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Passport Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Admin Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .user-profile-mini {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+
+        .user-profile-mini i {
+            font-size: 36px;
+            color: #38bdf8;
+            margin-right: 12px;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #f8fafc;
+        }
+
+        .user-info .role {
+            font-size: 11px;
+            color: #38bdf8;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links li.active a, .nav-links li a:hover {
+            background-color: #334155;
+            color: #fff;
+            border-left: 4px solid #38bdf8;
+        }
+
+        .nav-links li a i {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            padding: 0 20px;
+        }
+
+        .sidebar-bottom a {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            color: #f87171;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-bottom a i {
+            margin-right: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-container {
+            padding: 30px;
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .admin-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+            vertical-align: middle;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #d97706;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-resolved {
+            background-color: #d1fae5;
+            color: #059669;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .reply-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .reply-input {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 12px;
+            flex: 1;
+            outline: none;
+        }
+
+        .btn-reply {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-reply:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <div class="user-profile-mini">
+                <i class="fa-solid fa-user-shield"></i>
+                <div class="user-info">
+                    <div class="name">Hanz Christian Ventura</div>
+                    <div class="role">System Administrator</div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="admin.html"><i class="fa-solid fa-folder-open"></i> Manage Enquiries</a></li>
+                <li><a href="#" onclick="alert('User oversight management module coming soon.')"><i class="fa-solid fa-users"></i> Users Oversight</a></li>
+                <li><a href="#" onclick="alert('System audit logs module coming soon.')"><i class="fa-solid fa-chart-line"></i> Audit Logs</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <span>ADMINISTRATION OVERSIGHT PORTAL</span>
+            <span style="font-size: 13px; font-weight: 500; color: #6b7280;">Logged in as: hanzchristian.ventura@neu.edu.ph</span>
+        </div>
+        
+        <div class="content-container">
+            <div class="admin-card">
+                <div class="section-title">Client Enquiries & Support Management</div>
+                <div class="section-subtitle">Review incoming member enquiries linked to active application IDs and provide official administrative responses.</div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>App ID</th>
+                                <th>Subject / Topic</th>
+                                <th>User Message</th>
+                                <th>Date Submitted</th>
+                                <th>Status</th>
+                                <th>Admin Response & Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let adminEnquiries = [];
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadAdminEnquiries();
+        });
+
+        async function loadAdminEnquiries() {
+            const tableBody = document.getElementById('adminTableBody');
+            try {
+                const response = await fetch('/api/enquiries');
+                const result = await response.json();
+                adminEnquiries = result.enquiries || [];
+            } catch (error) {
+                console.error('Unable to load enquiries:', error);
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 30px;">Unable to load enquiries.</td></tr>`;
+                return;
+            }
+
+            if (adminEnquiries.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #9ca3af; padding: 30px;">No user enquiries submitted at this time.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            adminEnquiries.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const isResolved = item.status === 'Resolved';
+                
+                row.innerHTML = `
+                    <td><strong>${item.appId}</strong></td>
+                    <td>${item.subject}</td>
+                    <td style="max-width: 280px; white-space: pre-wrap;">${item.message || ''}</td>
+                    <td>${item.date}</td>
+                    <td><span class="${isResolved ? 'badge-resolved' : 'badge-pending'}">${item.status}</span></td>
+                    <td>
+                        ${isResolved ? 
+                            `<span style="color: #4b5563; font-size: 12px;">${item.reply || ''}</span>` : 
+                            `<div class="reply-input-group">
+                                <input type="text" class="reply-input" id="replyText-${index}" placeholder="Type official response...">
+                                <button type="button" class="btn-reply" onclick="sendReply(${index})">Send</button>
+                            </div>`
+                        }
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function sendReply(index) {
+            const replyText = document.getElementById(`replyText-${index}`).value.trim();
+            if (!replyText) {
+                alert("Please type a valid reply message.");
+                return;
+            }
+
+            const enquiry = adminEnquiries[index];
+            if (!enquiry) {
+                alert("Unable to find this enquiry. Please refresh the page.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/enquiries/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enquiryId: enquiry.id, reply: replyText })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Reply submission failed.');
+                }
+
+                await loadAdminEnquiries();
+                alert("Response sent successfully! The user's status has been updated to Resolved.");
+            } catch (error) {
+                console.error('Unable to save reply:', error);
+                alert("Unable to save the reply. Please try again.");
+            }
+        }
+    </script>
+</body>
+</html>
