@@ -30,49 +30,73 @@ const db = new sqlite3.Database(path.join(__dirname, 'database.db'), (err) => {
     }
 });
 
-// Create Users table if it doesn't exist
-db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    fullname TEXT,
-    email TEXT UNIQUE,
-    password TEXT
-)`);
+// Initialize every table before handling requests. The compatibility checks keep
+// existing databases usable when new appointment/message columns are introduced.
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fullname TEXT,
+        email TEXT UNIQUE,
+        password TEXT
+    )`);
 
-// Create application and enquiry tables if they don't exist
-db.run(`CREATE TABLE IF NOT EXISTS applications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE NOT NULL,
-    application_id TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'Pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)`);
+    db.run(`CREATE TABLE IF NOT EXISTS applications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        application_id TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Pending',
+        appointment_date TEXT,
+        appointment_location TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
 
-db.run(`CREATE TABLE IF NOT EXISTS enquiries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT,
-    application_id TEXT NOT NULL,
-    subject TEXT NOT NULL,
-    message TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'Pending Review',
-    reply TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)`);
+    db.run(`CREATE TABLE IF NOT EXISTS enquiries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        application_id TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        message TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'Pending Review',
+        reply TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
 
-// Add the message column to databases created before enquiry descriptions were stored
-db.all(`PRAGMA table_info(enquiries)`, (err, columns) => {
-    if (err) {
-        console.error('Unable to inspect enquiries table:', err.message);
-        return;
-    }
+    db.all(`PRAGMA table_info(applications)`, (err, columns) => {
+        if (err) {
+            console.error('Unable to inspect applications table:', err.message);
+            return;
+        }
 
-    if (!columns.some(column => column.name === 'message')) {
-        db.run(`ALTER TABLE enquiries ADD COLUMN message TEXT NOT NULL DEFAULT ''`, (alterError) => {
-            if (alterError) {
-                console.error('Unable to add enquiry message column:', alterError.message);
+        const existingColumns = columns.map(column => column.name);
+        const addColumn = (column, definition) => {
+            if (!existingColumns.includes(column)) {
+                db.run(`ALTER TABLE applications ADD COLUMN ${column} ${definition}`, (alterError) => {
+                    if (alterError) {
+                        console.error(`Unable to add ${column} column:`, alterError.message);
+                    }
+                });
             }
-        });
-    }
+        };
+
+        addColumn('appointment_date', 'TEXT');
+        addColumn('appointment_location', 'TEXT');
+    });
+
+    db.all(`PRAGMA table_info(enquiries)`, (err, columns) => {
+        if (err) {
+            console.error('Unable to inspect enquiries table:', err.message);
+            return;
+        }
+
+        if (!columns.some(column => column.name === 'message')) {
+            db.run(`ALTER TABLE enquiries ADD COLUMN message TEXT NOT NULL DEFAULT ''`, (alterError) => {
+                if (alterError) {
+                    console.error('Unable to add enquiry message column:', alterError.message);
+                }
+            });
+        }
+    });
 });
 
 // --- SIGN UP API ---
@@ -126,7 +150,7 @@ app.get('/api/user-data', (req, res) => {
 
 // --- APPLICATION API ---
 app.post('/api/applications', (req, res) => {
-    const { email, applicationId, appId, status } = req.body;
+    const { email, applicationId, appId, status, appointmentDate, appointmentLocation } = req.body;
     const savedApplicationId = applicationId || appId;
 
     if (!email || !savedApplicationId) {
@@ -134,27 +158,47 @@ app.post('/api/applications', (req, res) => {
     }
 
     const applicationStatus = status || 'Pending';
+    const scheduledDate = appointmentDate || (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        return date.toISOString().slice(0, 10);
+    })();
+    const scheduledLocation = appointmentLocation || 'DFA NCR East (SM Megamall)';
     const updateQuery = `UPDATE applications
-        SET application_id = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+        SET application_id = ?, status = ?, appointment_date = ?, appointment_location = ?, updated_at = CURRENT_TIMESTAMP
         WHERE email = ?`;
 
-    db.run(updateQuery, [savedApplicationId, applicationStatus, email], function(err) {
+    db.run(updateQuery, [savedApplicationId, applicationStatus, scheduledDate, scheduledLocation, email], function(err) {
         if (err) {
             return res.status(500).json({ success: false, message: 'Unable to save application.' });
         }
 
         if (this.changes > 0) {
-            return res.json({ success: true, applicationId: savedApplicationId, status: applicationStatus });
+            return res.json({
+                success: true,
+                applicationId: savedApplicationId,
+                status: applicationStatus,
+                appointmentDate: scheduledDate,
+                appointmentLocation: scheduledLocation
+            });
         }
 
         db.run(
-            `INSERT INTO applications (email, application_id, status) VALUES (?, ?, ?)`,
-            [email, savedApplicationId, applicationStatus],
+            `INSERT INTO applications (email, application_id, status, appointment_date, appointment_location)
+             VALUES (?, ?, ?, ?, ?)`,
+            [email, savedApplicationId, applicationStatus, scheduledDate, scheduledLocation],
             function(insertError) {
                 if (insertError) {
                     return res.status(500).json({ success: false, message: 'Unable to save application.' });
                 }
-                res.status(201).json({ success: true, id: this.lastID, applicationId: savedApplicationId, status: applicationStatus });
+                res.status(201).json({
+                    success: true,
+                    id: this.lastID,
+                    applicationId: savedApplicationId,
+                    status: applicationStatus,
+                    appointmentDate: scheduledDate,
+                    appointmentLocation: scheduledLocation
+                });
             }
         );
     });
@@ -162,7 +206,10 @@ app.post('/api/applications', (req, res) => {
 
 app.get('/api/applications/:email', (req, res) => {
     db.get(
-        `SELECT id, email, application_id AS applicationId, status, created_at AS createdAt, updated_at AS updatedAt
+        `SELECT id, email, application_id AS applicationId, status,
+            appointment_date AS appointmentDate,
+            appointment_location AS appointmentLocation,
+            created_at AS createdAt, updated_at AS updatedAt
          FROM applications WHERE email = ?`,
         [req.params.email],
         (err, application) => {
