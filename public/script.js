@@ -147,21 +147,39 @@ const loginEmailInput = document.getElementById('login-email');
 loginEmailInput.addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
 document.getElementById('login-password').addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
 
-function handleLoginSubmit(event) {
+async function handleLoginSubmit(event) {
     event.preventDefault();
 
     const emailInput = document.getElementById('login-email').value.trim();
     const passInput = document.getElementById('login-password').value;
-    localStorage.setItem('userEmail', emailInput);
 
     if (emailInput === 'hanzchristian.ventura@neu.edu.ph' && passInput === 'hanzchristian.ventura@neu.edu.ph') {
+        localStorage.setItem('userEmail', emailInput);
         localStorage.setItem('userRole', 'admin');
         window.location.href = 'admin.html';
         return;
     }
 
-    localStorage.setItem('userRole', 'member');
-    window.location.href = 'dashboard.html';
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailInput, password: passInput })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            localStorage.setItem('userEmail', emailInput);
+            localStorage.setItem('userRole', 'member');
+            window.location.href = 'dashboard.html';
+        } else {
+            loginErrorMessage.textContent = result.message;
+            loginErrorMessage.classList.remove('hidden');
+        }
+    } catch (err) {
+        loginErrorMessage.textContent = 'Connection error. Make sure server is running.';
+        loginErrorMessage.classList.remove('hidden');
+    }
 }
 
 loginForm.addEventListener('submit', handleLoginSubmit);

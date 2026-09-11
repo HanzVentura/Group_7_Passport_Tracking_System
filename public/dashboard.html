@@ -553,7 +553,7 @@
             <div class="user-profile-mini">
                 <i class="fa-solid fa-circle-user"></i>
                 <div class="user-info">
-                    <div class="name">Hanz Christian Ventura</div>
+                    <div class="name" id="userName">Loading...</div>
                 </div>
             </div>
             <ul class="nav-links">
@@ -577,7 +577,7 @@
         <div class="dashboard-container">
             <!-- Welcome Banner -->
             <div class="welcome-banner">
-                <h1>Good Day, Hanz Christian Ventura</h1>
+                <h1 id="greetingText">Good Day</h1>
                 <p>Track your passport application and stay updated on the status of your passport application anytime, anywhere.</p>
             </div>
 
@@ -791,7 +791,7 @@
                         
                         <div class="form-row two-col" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-size: 14px;">
                             <div>
-                                <p style="margin-bottom: 6px;"><strong>Full Name:</strong> Hanz Christian Ventura</p>
+                                <p style="margin-bottom: 6px;"><strong>Full Name:</strong> <span id="summaryFullName">Loading...</span></p>
                                 <p style="margin-bottom: 6px;"><strong>Category:</strong> New First-Time Application</p>
                             </div>
                             <div>
@@ -857,6 +857,19 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/user-data');
+                const data = await response.json();
+
+                if (data.loggedIn && data.fullName) {
+                    document.getElementById('greetingText').textContent = 'Good Day, ' + data.fullName;
+                    document.getElementById('userName').textContent = data.fullName;
+                    document.getElementById('summaryFullName').textContent = data.fullName;
+                }
+            } catch (error) {
+                console.error('Unable to load user data:', error);
+            }
+
             const userEmail = localStorage.getItem('userEmail');
             if (!userEmail) {
                 return;

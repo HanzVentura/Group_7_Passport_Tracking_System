@@ -133,8 +133,9 @@ app.post('/api/login', (req, res) => {
             return res.json({ success: false, message: 'Invalid credentials!' });
         }
 
-        // Save user details in session
-        req.session.user = { id: user.id, fullname: user.fullname, email: user.email };
+        // Replace the session user with the freshly authenticated database record.
+        const authenticatedUser = { id: user.id, fullName: user.fullname, email: user.email };
+        req.session.user = authenticatedUser;
         res.json({ success: true, message: 'Login successful!' });
     });
 });
@@ -142,7 +143,7 @@ app.post('/api/login', (req, res) => {
 // --- GET USER DATA FOR DASHBOARD ---
 app.get('/api/user-data', (req, res) => {
     if (req.session.user) {
-        res.json({ loggedIn: true, fullname: req.session.user.fullname });
+        res.json({ loggedIn: true, fullName: req.session.user.fullName });
     } else {
         res.json({ loggedIn: false });
     }
