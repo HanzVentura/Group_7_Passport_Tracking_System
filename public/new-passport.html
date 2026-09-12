@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Passport Application - Passport Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="passport-application.css">
+</head>
+<body data-application-type="new">
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="user-profile-mini">
+                <i class="fa-solid fa-circle-user"></i>
+                <div class="user-info"><div class="name" id="userName">Loading...</div></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html"><i class="fa-solid fa-house"></i>Dashboard</a></li>
+                <li><a href="payments.html"><i class="fa-solid fa-wallet"></i>Payments</a></li>
+                <li><a href="#"><i class="fa-solid fa-receipt"></i>Receipts</a></li>
+                <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i>Enquiries</a></li>
+                <li><a href="#"><i class="fa-solid fa-user"></i>Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i>Settings</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i>Log Out</a></div>
+    </aside>
+
+    <main class="main-content">
+        <div class="header" id="pageHeaderTitle">NEW PASSPORT APPLICATION</div>
+        <div class="dashboard-container">
+            <div class="welcome-banner">
+                <h1 id="greetingText">Good Day</h1>
+                <p>Complete each step to submit your passport application.</p>
+            </div>
+            <div class="wizard-steps">
+                <div class="wizard-step" id="wStep1"><div class="step-badge">1</div><span>Application Category</span></div>
+                <div class="wizard-divider"></div>
+                <div class="wizard-step" id="wStep2"><div class="step-badge">2</div><span>Document Upload</span></div>
+                <div class="wizard-divider"></div>
+                <div class="wizard-step" id="wStep3"><div class="step-badge">3</div><span>Review</span></div>
+            </div>
+
+            <section class="step-pane" id="pane1">
+                <div class="form-section-card">
+                    <div class="section-title">Select Application Category</div>
+                    <div class="section-subtitle" id="categoryDescription"></div>
+                    <div class="category-grid">
+                        <button type="button" class="selection-card" onclick="goToWizardStep(2)">
+                            <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6;"></i>
+                            <h3>New First-Time Application</h3>
+                            <p>For applicants who have never been issued a Philippine ePassport.</p>
+                        </button>
+                        <button type="button" class="selection-card" onclick="alert('Lost/Damaged Passport Replacement is coming soon.')">
+                            <i class="fa-solid fa-passport" style="font-size: 42px; color: #9ca3af;"></i>
+                            <h3>Lost/Damaged Passport Replacement</h3>
+                            <p>For replacing a valid ePassport that has been lost or severely damaged.</p>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-actions"><a class="btn-secondary" href="dashboard.html">Back to Dashboard</a></div>
+            </section>
+
+            <section class="step-pane" id="pane2" hidden>
+                <div class="form-section-card">
+                    <div class="section-title">Proof of Identity (Primary)</div>
+                    <div class="section-subtitle" id="identityDescription"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="idType">ID Document Type</label><select class="form-control" id="idType"><option>Philippine Identification (PhilID / National ID / ePhilID)</option><option>LTO Driver's License</option><option>Unified Multi-Purpose ID (UMID / SSS ID)</option><option>Professional Regulation Commission (PRC) ID</option><option>Philippine Postal ID (Improved)</option><option>COMELEC Voter's ID or Voter's Certification</option><option>GSIS e-Card</option><option>School ID (for students)</option></select></div>
+                        <div class="form-group"><label for="idNumber">ID Number</label><input class="form-control" id="idNumber" type="text" placeholder="Enter ID Number"></div>
+                        <div class="form-group"><label for="idExpiry">Date of Expiry</label><input class="form-control" id="idExpiry" type="date"></div>
+                    </div>
+                    <div class="upload-box"><label class="btn-upload" for="idFile"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</label><input id="idFile" data-name-target="idFileName" type="file" hidden><span class="upload-file-name" id="idFileName">No file selected (Max 5MB)</span></div>
+                </div>
+                <div class="form-section-card">
+                    <div class="section-title" id="citizenshipTitle"></div>
+                    <div class="section-subtitle" id="citizenshipDescription"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label id="citizenshipTypeLabel" for="citizenshipType">Document Type</label><select class="form-control" id="citizenshipType"><option>Birth Certificate (PSA)</option><option>Certificate of Naturalization</option></select></div>
+                        <div class="form-group"><label id="citizenshipNumberLabel" for="citizenshipNumber"></label><input class="form-control" id="citizenshipNumber" type="text"></div>
+                        <div class="form-group"><label id="citizenshipDateLabel" for="citizenshipDate"></label><input class="form-control" id="citizenshipDate" type="date"></div>
+                    </div>
+                    <div class="upload-box"><label class="btn-upload" for="citizenshipFile"><i class="fa-solid fa-cloud-arrow-up"></i> Upload Document</label><input id="citizenshipFile" data-name-target="citizenshipFileName" type="file" hidden><span class="upload-file-name" id="citizenshipFileName">No file selected</span></div>
+                </div>
+                <div class="form-actions"><button type="button" class="btn-secondary" onclick="goToWizardStep(1)">Back</button><button type="button" class="btn-primary" onclick="validateAndProceed()">Save &amp; Continue</button></div>
+            </section>
+
+            <section class="step-pane" id="pane3" hidden>
+                <div class="form-section-card">
+                    <div class="section-title">Applicant Summary</div>
+                    <div class="section-subtitle">Review your application details before continuing to payment.</div>
+                    <div class="form-row two-col" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-size: 14px;">
+                        <div><p><strong>Full Name:</strong> <span id="summaryFullName">Loading...</span></p><p><strong>Category:</strong> <span id="summaryCategory"></span></p></div>
+                        <div><p><strong>Primary ID:</strong> <span id="summaryIdType">Government-Issued ID</span></p><p><strong>Citizenship Proof:</strong> <span id="summaryCitizenship"></span></p></div>
+                    </div>
+                </div>
+                <div class="form-actions"><button type="button" class="btn-secondary" onclick="goToWizardStep(2)">Back</button><button type="button" class="btn-primary" onclick="completePayment()">Save &amp; Continue</button></div>
+            </section>
+        </div>
+    </main>
+    <script src="passport-application.js"></script>
+</body>
+</html>

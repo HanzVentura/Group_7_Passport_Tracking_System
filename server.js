@@ -44,6 +44,7 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
         application_id TEXT NOT NULL,
+        application_type TEXT NOT NULL DEFAULT 'New First-Time Application',
         status TEXT NOT NULL DEFAULT 'Pending',
         appointment_date TEXT,
         appointment_location TEXT,
@@ -81,6 +82,7 @@ db.serialize(() => {
 
         addColumn('appointment_date', 'TEXT');
         addColumn('appointment_location', 'TEXT');
+        addColumn('application_type', "TEXT NOT NULL DEFAULT 'New First-Time Application'");
     });
 
     db.all(`PRAGMA table_info(enquiries)`, (err, columns) => {
@@ -151,19 +153,20 @@ app.get('/api/user-data', (req, res) => {
 
 // --- APPLICATION API ---
 app.post('/api/applications', (req, res) => {
-    const { email, applicationId, appId } = req.body;
+    const { email, applicationId, appId, applicationType } = req.body;
     const savedApplicationId = applicationId || appId;
+    const savedApplicationType = applicationType || 'New First-Time Application';
 
     if (!email || !savedApplicationId) {
         return res.status(400).json({ success: false, message: 'Email and application ID are required.' });
     }
 
     const updateQuery = `UPDATE applications
-        SET application_id = ?, status = 'Pending Payment', appointment_date = NULL,
+        SET application_id = ?, application_type = ?, status = 'Pending Payment', appointment_date = NULL,
             appointment_location = NULL, updated_at = CURRENT_TIMESTAMP
         WHERE email = ?`;
 
-    db.run(updateQuery, [savedApplicationId, email], function(err) {
+    db.run(updateQuery, [savedApplicationId, savedApplicationType, email], function(err) {
         if (err) {
             return res.status(500).json({ success: false, message: 'Unable to save application.' });
         }
@@ -172,6 +175,7 @@ app.post('/api/applications', (req, res) => {
             return res.json({
                 success: true,
                 applicationId: savedApplicationId,
+                applicationType: savedApplicationType,
                 status: 'Pending Payment',
                 appointmentDate: null,
                 appointmentLocation: null
@@ -179,9 +183,9 @@ app.post('/api/applications', (req, res) => {
         }
 
         db.run(
-            `INSERT INTO applications (email, application_id, status, appointment_date, appointment_location)
-             VALUES (?, ?, ?, ?, ?)`,
-            [email, savedApplicationId, 'Pending Payment', null, null],
+            `INSERT INTO applications (email, application_id, application_type, status, appointment_date, appointment_location)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [email, savedApplicationId, savedApplicationType, 'Pending Payment', null, null],
             function(insertError) {
                 if (insertError) {
                     return res.status(500).json({ success: false, message: 'Unable to save application.' });
@@ -190,6 +194,7 @@ app.post('/api/applications', (req, res) => {
                     success: true,
                     id: this.lastID,
                     applicationId: savedApplicationId,
+                    applicationType: savedApplicationType,
                     status: 'Pending Payment',
                     appointmentDate: null,
                     appointmentLocation: null
@@ -201,7 +206,8 @@ app.post('/api/applications', (req, res) => {
 
 app.get('/api/applications/:email', (req, res) => {
     db.get(
-        `SELECT id, email, application_id AS applicationId, status,
+        `SELECT id, email, application_id AS applicationId,
+            application_type AS applicationType, status,
             appointment_date AS appointmentDate,
             appointment_location AS appointmentLocation,
             created_at AS createdAt, updated_at AS updatedAt

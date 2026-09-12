@@ -333,6 +333,8 @@
             padding: 30px;
             text-align: center;
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
             transition: all 0.2s ease;
         }
 
@@ -571,7 +573,7 @@
                 </div>
             </div>
             <ul class="nav-links">
-                <li class="active"><a href="#" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="active"><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li><a href="payments.html"><i class="fa-solid fa-wallet"></i> Payments</a></li>
                 <li><a href="#"><i class="fa-solid fa-receipt"></i> Receipts</a></li>
                 <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i> Enquiries</a></li>
@@ -612,7 +614,7 @@
                             <div id="dispAppId" style="font-weight: 700; color: #1f2937; margin-bottom: 8px;">---</div>
                             
                             <div class="application-meta-label">Type</div>
-                            <div id="dispAppType" style="font-weight: 700; color: #1f2937; margin-bottom: 8px;">New First-Time Application</div>
+                            <div id="dispAppType" style="font-weight: 700; color: #1f2937; margin-bottom: 8px;">---</div>
                             
                             <div class="application-meta-label">Current Status</div>
                             <div id="dispAppStatus" style="font-weight: 700; color: #2563eb; margin-bottom: 8px;">Processing</div>
@@ -659,166 +661,17 @@
                 <!-- Passport Application Type Section -->
                 <div class="selection-section-title">Passport Application Type</div>
                 <div class="selection-grid">
-                    <div class="selection-card" onclick="startApplication()">
+                    <a class="selection-card" href="new-passport.html">
                         <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
                         <h3>New Passport</h3>
                         <p>First-time application or replacement of a lost/damaged passport.</p>
-                    </div>
+                    </a>
 
-                    <div class="selection-card" onclick="alert('Passport Renewal flow coming soon.')">
+                    <a class="selection-card" href="renewal.html">
                         <i class="fa-solid fa-passport" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
                         <h3>Passport Renewal</h3>
                         <p>Apply to renew an existing passport that has expired or is about to expire.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ================= VIEW 2: MULTI-STEP APPLICATION WIZARD ================= -->
-            <div id="wizardView" class="app-view">
-                <div class="wizard-steps">
-                    <div class="wizard-step active" id="wStep1">
-                        <div class="step-badge">1</div>
-                        <span>Application Category</span>
-                    </div>
-                    <div class="wizard-divider"></div>
-                    <div class="wizard-step" id="wStep2">
-                        <div class="step-badge">2</div>
-                        <span>Document Upload</span>
-                    </div>
-                    <div class="wizard-divider"></div>
-                    <div class="wizard-step" id="wStep3">
-                        <div class="step-badge">3</div>
-                        <span>Review</span>
-                    </div>
-                </div>
-
-                <!-- STEP 1 CONTENT -->
-                <div class="step-pane active-pane" id="pane1">
-                    <div class="form-section-card">
-                        <div class="section-title">Select Application Category</div>
-                        <div class="section-subtitle">To proceed with your New Passport application, please specify the exact service you require.</div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;">
-                            <div class="selection-card" onclick="goToWizardStep(2)">
-                                <i class="fa-solid fa-globe" style="font-size: 42px; color: #3b82f6; margin-bottom: 16px;"></i>
-                                <h3>New First-Time Application</h3>
-                                <p>For applicants who have never been issued a Philippine ePassport.</p>
-                            </div>
-                            <div class="selection-card" onclick="alert('Lost/Damaged Passport Replacement is coming soon.')">
-                                <i class="fa-solid fa-passport" style="font-size: 42px; color: #9ca3af; margin-bottom: 16px;"></i>
-                                <h3 style="color: #4b5563;">Lost/Damaged Passport Replacement</h3>
-                                <p>For replacing a valid ePassport that has been lost or severely damaged. (Coming Soon)</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary" onclick="switchView('dashboard')">Back to Dashboard</button>
-                    </div>
-                </div>
-
-                <!-- STEP 2 CONTENT -->
-                <div class="step-pane" id="pane2" style="display:none;">
-                    <div class="form-section-card">
-                        <div class="section-title">Proof of Identity (Primary)</div>
-                        <div class="section-subtitle">Please upload at least one (1) valid primary government-issued ID.</div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>ID Document Type</label>
-                                <select class="form-control" id="idType">
-                                    <option>Philippine Identification (PhilID / National ID / ePhilID)</option>
-                                    <option>LTO Driver's License</option>
-                                    <option>Unified Multi-Purpose ID (UMID / SSS ID)</option>
-                                    <option>Professional Regulation Commission (PRC) ID</option>
-                                    <option>Philippine Postal ID (Improved)</option>
-                                    <option>COMELEC Voter's ID or Voter's Certification</option>
-                                    <option>GSIS e-Card</option>
-                                    <option>Overseas Workers Welfare Administration (OWWA) E-Card</option>
-                                    <option>Senior Citizen ID</option>
-                                    <option>Persons with Disabilities (PWD) ID</option>
-                                    <option>Police Clearance / PNP Permit to Carry Firearms</option>
-                                    <option>School ID (for students)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>ID Number</label>
-                                <input type="text" class="form-control" id="idNumber" placeholder="Enter ID Number">
-                            </div>
-                            <div class="form-group">
-                                <label>Date of Expiry</label>
-                                <input type="date" class="form-control" id="idExpiry">
-                            </div>
-                        </div>
-
-                        <div class="upload-box">
-                            <label class="btn-upload" style="cursor: pointer;">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
-                                <input type="file" id="idFile" style="display: none;" onchange="updateFileName('idFile', 'idFileName')">
-                            </label>
-                            <span class="upload-file-name" id="idFileName">No file selected (Max 5MB)</span>
-                        </div>
-                    </div>
-
-                    <div class="form-section-card">
-                        <div class="section-title">Proof of Philippine Citizenship</div>
-                        <div class="section-subtitle">A clear, scanned copy of your birth certificate is mandatory for first-time applicants.</div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Document Type</label>
-                                <select class="form-control" id="citType">
-                                    <option>Birth Certificate (PSA)</option>
-                                    <option>Certificate of Naturalization</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Certificate Number</label>
-                                <input type="text" class="form-control" id="citNumber" placeholder="Certificate / Barcode No.">
-                            </div>
-                            <div class="form-group">
-                                <label>Date of Registration</label>
-                                <input type="date" class="form-control" id="citDate">
-                            </div>
-                        </div>
-
-                        <div class="upload-box">
-                            <label class="btn-upload" style="cursor: pointer;">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Document
-                                <input type="file" id="citFile" style="display: none;" onchange="updateFileName('citFile', 'citFileName')">
-                            </label>
-                            <span class="upload-file-name" id="citFileName">No file selected</span>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary" onclick="goToWizardStep(1)">Back</button>
-                        <button type="button" class="btn-primary" onclick="validateAndProceed()">Save & Continue</button>
-                    </div>
-                </div>
-
-                <!-- STEP 3 CONTENT -->
-                <div class="step-pane" id="pane3" style="display:none;">
-                    <div class="form-section-card">
-                        <div class="section-title">Applicant Summary</div>
-                        <div class="section-subtitle">Review your application details before continuing to payment.</div>
-                        
-                        <div class="form-row two-col" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-size: 14px;">
-                            <div>
-                                <p style="margin-bottom: 6px;"><strong>Full Name:</strong> <span id="summaryFullName">Loading...</span></p>
-                                <p style="margin-bottom: 6px;"><strong>Category:</strong> New First-Time Application</p>
-                            </div>
-                            <div>
-                                <p style="margin-bottom: 6px;"><strong>Primary ID:</strong> <span id="summaryIdType">Government-Issued ID</span></p>
-                                <p style="margin-bottom: 6px;"><strong>Citizenship Proof:</strong> PSA Birth Certificate</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary" onclick="goToWizardStep(2)">Back</button>
-                        <button type="button" class="btn-primary" onclick="completePayment()">Save &amp; Continue</button>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -851,6 +704,7 @@
 
         function displaySavedApplication(application) {
             document.getElementById('dispAppId').innerText = application.applicationId;
+            document.getElementById('dispAppType').innerText = application.applicationType || localStorage.getItem('applicationType') || 'New First-Time Application';
             document.getElementById('dispAppStatus').innerText = application.status;
             updateStatusTracker(application.status);
             document.getElementById('dispComeDate').innerText = formatAppointmentDate(application.appointmentDate);
@@ -905,122 +759,6 @@
             }
         });
 
-        function switchView(viewName) {
-            const dashboardView = document.getElementById('dashboardView');
-            const wizardView = document.getElementById('wizardView');
-            const headerTitle = document.getElementById('pageHeaderTitle');
-
-            if(viewName === 'dashboard') {
-                dashboardView.classList.add('active-view');
-                wizardView.classList.remove('active-view');
-                headerTitle.innerText = "DASHBOARD";
-            } else if(viewName === 'wizard') {
-                dashboardView.classList.remove('active-view');
-                wizardView.classList.add('active-view');
-                headerTitle.innerText = "NEW PASSPORT APPLICATION";
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function startApplication() {
-            switchView('wizard');
-            goToWizardStep(1);
-        }
-
-        function updateFileName(inputId, nameId) {
-            const fileInput = document.getElementById(inputId);
-            const fileNameSpan = document.getElementById(nameId);
-            if (fileInput.files.length > 0) {
-                fileNameSpan.innerText = fileInput.files[0].name;
-                fileNameSpan.style.color = '#10b981';
-            } else {
-                fileNameSpan.innerText = "No file selected";
-                fileNameSpan.style.color = '#6b7280';
-            }
-        }
-
-        function validateAndProceed() {
-            const idNumber = document.getElementById('idNumber').value.trim();
-            const idExpiry = document.getElementById('idExpiry').value;
-            const idFile = document.getElementById('idFile').files.length;
-
-            const citNumber = document.getElementById('citNumber').value.trim();
-            const citDate = document.getElementById('citDate').value;
-            const citFile = document.getElementById('citFile').files.length;
-
-            if (!idNumber || !idExpiry || idFile === 0) {
-                alert("Please complete all fields and attach a photo/document for Proof of Identity.");
-                return;
-            }
-
-            if (!citNumber || !citDate || citFile === 0) {
-                alert("Please complete all fields and attach a photo/document for Proof of Philippine Citizenship.");
-                return;
-            }
-
-            const selectedIdDropdown = document.getElementById('idType');
-            document.getElementById('summaryIdType').innerText = selectedIdDropdown.options[selectedIdDropdown.selectedIndex].text;
-
-            goToWizardStep(3);
-        }
-
-        async function completePayment() {
-            const randomId = 'PH-' + Math.floor(100000 + Math.random() * 900000);
-            const userEmail = localStorage.getItem('userEmail');
-
-            if (!userEmail) {
-                alert('Please log in before saving your application.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/applications', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: userEmail,
-                        applicationId: randomId,
-                        status: 'Pending Payment'
-                    })
-                });
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    throw new Error(result.message || 'Unable to save your application.');
-                }
-
-                localStorage.setItem('activeAppId', result.applicationId || randomId);
-                window.location.href = 'payments.html';
-            } catch (error) {
-                console.error('Unable to save application:', error);
-                alert(error.message);
-            }
-        }
-
-        function goToWizardStep(stepNo) {
-            document.getElementById('pane1').style.display = 'none';
-            document.getElementById('pane2').style.display = 'none';
-            document.getElementById('pane3').style.display = 'none';
-
-            document.getElementById('wStep1').className = 'wizard-step';
-            document.getElementById('wStep2').className = 'wizard-step';
-            document.getElementById('wStep3').className = 'wizard-step';
-
-            if(stepNo === 1) {
-                document.getElementById('pane1').style.display = 'block';
-                document.getElementById('wStep1').classList.add('active');
-            } else if(stepNo === 2) {
-                document.getElementById('pane2').style.display = 'block';
-                document.getElementById('wStep1').classList.add('completed');
-                document.getElementById('wStep2').classList.add('active');
-            } else if(stepNo === 3) {
-                document.getElementById('pane3').style.display = 'block';
-                document.getElementById('wStep1').classList.add('completed');
-                document.getElementById('wStep2').classList.add('completed');
-                document.getElementById('wStep3').classList.add('active');
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
     </script>
 </body>
 </html>
