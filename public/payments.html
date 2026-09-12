@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments - Passport Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f7f6; color: #333; display: flex; min-height: 100vh; overflow-x: hidden; }
+        .sidebar { width: 260px; flex: 0 0 260px; background: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; }
+        .user-profile-mini { display: flex; align-items: center; padding: 0 20px 20px; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .user-profile-mini i { font-size: 36px; color: #3b82f6; margin-right: 12px; }
+        .user-info .name { font-weight: 600; font-size: 14px; color: #1f2937; overflow-wrap: anywhere; }
+        .nav-links { list-style: none; }
+        .nav-links li a { display: flex; align-items: center; padding: 12px 20px; color: #4b5563; text-decoration: none; font-size: 14px; transition: all .2s ease; }
+        .nav-links li.active a, .nav-links li a:hover { background: #eff6ff; color: #3b82f6; border-right: 4px solid #3b82f6; }
+        .nav-links li a i { width: 16px; margin-right: 12px; text-align: center; }
+        .sidebar-bottom { padding: 0 20px; }
+        .sidebar-bottom a { display: flex; align-items: center; padding: 10px 0; color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .sidebar-bottom a i { margin-right: 12px; }
+        .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; }
+        .header { background: #fff; padding: 20px 30px; border-bottom: 1px solid #e0e0e0; font-size: 20px; font-weight: 700; color: #1f2937; }
+        .dashboard-container { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .welcome-banner { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; padding: 25px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(59,130,246,.15); }
+        .welcome-banner h1 { font-size: 24px; margin-bottom: 8px; }
+        .welcome-banner p { font-size: 14px; opacity: .9; }
+        .content-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); gap: 24px; align-items: start; }
+        .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,.02); }
+        .card-title { font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+        .card-subtitle { color: #6b7280; font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
+        .notice { display: flex; gap: 14px; padding: 16px; margin-bottom: 24px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; color: #1e40af; }
+        .notice i { margin-top: 2px; font-size: 18px; }
+        .notice strong { display: block; font-size: 14px; margin-bottom: 5px; }
+        .notice p { font-size: 13px; line-height: 1.5; }
+        .section-label { display: block; color: #374151; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+        .plan-list { display: grid; gap: 12px; margin-bottom: 24px; }
+        .plan-option { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: border-color .2s, background .2s; }
+        .plan-option:hover, .plan-option.selected { border-color: #3b82f6; background: #eff6ff; }
+        .plan-option input { position: absolute; opacity: 0; }
+        .plan-copy { display: flex; align-items: flex-start; gap: 12px; }
+        .plan-copy i { color: #9ca3af; margin-top: 3px; }
+        .plan-option.selected .plan-copy i { color: #2563eb; }
+        .plan-name { color: #1f2937; font-size: 14px; font-weight: 700; display: block; margin-bottom: 4px; }
+        .plan-time { color: #6b7280; font-size: 12px; }
+        .plan-price { color: #1d4ed8; font-size: 16px; font-weight: 700; white-space: nowrap; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { color: #374151; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; outline: none; background: #fff; color: #1f2937; font-size: 14px; }
+        .form-control:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+        .method-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .method-option { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 8px; border: 1px solid #d1d5db; border-radius: 8px; color: #4b5563; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .method-option:has(input:checked) { border-color: #3b82f6; color: #2563eb; background: #eff6ff; }
+        .method-option input { accent-color: #2563eb; }
+        .button-row { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 24px; }
+        .btn-primary, .btn-secondary { border-radius: 8px; padding: 11px 24px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: #3b82f6; color: #fff; border: 0; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+        .btn-secondary { background: #fff; color: #374151; border: 1px solid #d1d5db; text-decoration: none; }
+        .btn-secondary:hover { background: #f3f4f6; }
+        .summary-line { display: flex; justify-content: space-between; gap: 15px; padding: 12px 0; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+        .summary-line span:first-child { color: #6b7280; }
+        .summary-line strong { color: #1f2937; text-align: right; overflow-wrap: anywhere; }
+        .total-line { border: 0; padding-top: 18px; font-size: 16px; }
+        .total-line strong { color: #1d4ed8; }
+        .empty-state, .success-state { text-align: center; padding: 24px 8px; }
+        .empty-state i, .success-state i { color: #9ca3af; font-size: 32px; margin-bottom: 12px; }
+        .empty-state p, .success-state p { color: #6b7280; font-size: 13px; line-height: 1.5; }
+        .success-state { display: none; }
+        .success-state i { color: #10b981; }
+        .message { display: none; margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
+        .message.error { display: block; color: #991b1b; background: #fef2f2; border: 1px solid #fecaca; }
+        .message.success { display: block; color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+        @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 680px) { body { display: block; } .sidebar { width: 100%; height: auto; padding: 12px 0; } .sidebar-bottom { display: none; } .nav-links { display: grid; grid-template-columns: repeat(3, 1fr); } .nav-links li a { justify-content: center; padding: 10px 6px; font-size: 11px; gap: 4px; flex-direction: column; } .nav-links li a i { margin: 0; } .header { padding: 16px 20px; } .dashboard-container { padding: 20px 16px; } .welcome-banner { padding: 20px; } .form-row, .method-list { grid-template-columns: 1fr; } .form-group.full { grid-column: auto; } .button-row { justify-content: stretch; flex-direction: column-reverse; } .button-row a, .button-row button { width: 100%; text-align: center; } }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div>
+            <div class="user-profile-mini">
+                <i class="fa-solid fa-circle-user"></i>
+                <div class="user-info"><div class="name" id="userName">Loading...</div></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html"><i class="fa-solid fa-house"></i>Dashboard</a></li>
+                <li class="active"><a href="payments.html"><i class="fa-solid fa-wallet"></i>Payments</a></li>
+                <li><a href="#"><i class="fa-solid fa-receipt"></i>Receipts</a></li>
+                <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i>Enquiries</a></li>
+                <li><a href="#"><i class="fa-solid fa-user"></i>Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i>Settings</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i>Log Out</a></div>
+    </aside>
+
+
+    <main class="main-content">
+        <div class="header">PAYMENTS</div>
+        <div class="dashboard-container">
+            <div class="welcome-banner">
+                <h1 id="greetingText">Passport Payment</h1>
+                <p>Complete your payment to lock in your appointment schedule.</p>
+            </div>
+
+
+            <div class="content-grid" id="paymentContent">
+                <section class="card">
+                    <div class="card-title">Passport Processing Fee</div>
+                    <div class="card-subtitle">Choose the processing time that suits your travel plans.</div>
+                    <div class="notice" role="note">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <div><strong>Official DFA Notice</strong><p>Payment is required to lock in your appointment schedule. Your appointment will only be generated after your payment is successfully recorded.</p></div>
+                    </div>
+                    <span class="section-label">Select processing option</span>
+                    <div class="plan-list">
+                        <label class="plan-option selected">
+                            <input type="radio" name="processingType" value="regular" data-amount="950" checked>
+                            <span class="plan-copy"><i class="fa-solid fa-circle-check"></i><span><span class="plan-name">Regular Processing</span><span class="plan-time">12 working days</span></span></span>
+                            <span class="plan-price">₱950.00</span>
+                        </label>
+                        <label class="plan-option">
+                            <input type="radio" name="processingType" value="expedited" data-amount="1200">
+                            <span class="plan-copy"><i class="fa-regular fa-circle-check"></i><span><span class="plan-name">Expedited / Rush Processing</span><span class="plan-time">7 working days</span></span></span>
+                            <span class="plan-price">₱1,200.00</span>
+                        </label>
+                    </div>
+
+
+                    <form id="paymentForm">
+                        <span class="section-label">Payment method</span>
+                        <div class="method-list">
+                            <label class="method-option"><input type="radio" name="paymentMethod" value="GCash" checked> GCash</label>
+                            <label class="method-option"><input type="radio" name="paymentMethod" value="Maya"> Maya</label>
+                            <label class="method-option"><input type="radio" name="paymentMethod" value="Credit Card"> Card</label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full"><label for="accountName">Account or cardholder name</label><input class="form-control" id="accountName" type="text" autocomplete="name" required placeholder="Juan Dela Cruz"></div>
+                            <div class="form-group full"><label for="accountReference">Mobile number or card number</label><input class="form-control" id="accountReference" type="text" required placeholder="09XX XXX XXXX"></div>
+                            <div class="form-group"><label for="paymentEmail">Email receipt to</label><input class="form-control" id="paymentEmail" type="email" required></div>
+                            <div class="form-group"><label for="paymentNote">Reference note <span style="font-weight:400;color:#9ca3af;">(optional)</span></label><input class="form-control" id="paymentNote" type="text" placeholder="e.g. payment reference"></div>
+                        </div>
+                        <div id="formMessage" class="message" role="status"></div>
+                        <div class="button-row"><a class="btn-secondary" href="dashboard.html">Back to Dashboard</a><button class="btn-primary" id="payButton" type="submit"><i class="fa-solid fa-lock"></i> Pay Now</button></div>
+                    </form>
+                </section>
+
+
+                <aside class="card">
+                    <div class="card-title">Payment Summary</div>
+                    <div class="card-subtitle">Review your application before continuing.</div>
+                    <div id="applicationSummary" class="empty-state"><i class="fa-regular fa-file-lines"></i><p>Loading your active application...</p></div>
+                    <div id="summaryDetails" style="display:none;">
+                        <div class="summary-line"><span>Application ID</span><strong id="summaryId">---</strong></div>
+                        <div class="summary-line"><span>Applicant</span><strong id="summaryApplicant">---</strong></div>
+                        <div class="summary-line"><span>Current status</span><strong id="summaryStatus">---</strong></div>
+                        <div class="summary-line"><span>Processing</span><strong id="summaryPlan">Regular Processing</strong></div>
+                        <div class="summary-line total-line"><span>Total due</span><strong id="summaryAmount">₱950.00</strong></div>
+                    </div>
+                    <div id="successState" class="success-state"><i class="fa-solid fa-circle-check"></i><p id="successMessage"></p><a class="btn-primary" href="dashboard.html" style="display:inline-block;margin-top:16px;text-decoration:none;">View Dashboard</a></div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+
+    <script>
+        const userEmail = localStorage.getItem('userEmail');
+        let activeApplication = null;
+        const form = document.getElementById('paymentForm');
+        const message = document.getElementById('formMessage');
+        const payButton = document.getElementById('payButton');
+
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+
+        function updateSelectedPlan() {
+            const selected = document.querySelector('input[name="processingType"]:checked');
+            document.querySelectorAll('.plan-option').forEach(option => {
+                const isSelected = option.querySelector('input').checked;
+                option.classList.toggle('selected', isSelected);
+                option.querySelector('i').className = isSelected ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-check';
+            });
+            document.getElementById('summaryPlan').textContent = selected.value === 'expedited' ? 'Expedited / Rush Processing' : 'Regular Processing';
+            document.getElementById('summaryAmount').textContent = `₱${Number(selected.dataset.amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`;
+        }
+
+
+        function displayApplication(application) {
+            activeApplication = application;
+            localStorage.setItem('activeAppId', application.applicationId);
+            document.getElementById('applicationSummary').style.display = 'none';
+            document.getElementById('summaryDetails').style.display = 'block';
+            document.getElementById('summaryId').textContent = application.applicationId;
+            document.getElementById('summaryApplicant').textContent = userEmail;
+            document.getElementById('summaryStatus').textContent = application.status;
+            document.getElementById('paymentEmail').value = userEmail;
+            if (application.status === 'Paid') {
+                payButton.disabled = true;
+                payButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> Already Paid';
+                showMessage('This application has already been paid. Your appointment is locked in.', 'success');
+            }
+        }
+
+
+        async function loadPage() {
+            if (!userEmail) {
+                document.getElementById('applicationSummary').innerHTML = '<i class="fa-solid fa-lock"></i><p>Please log in before making a payment.</p>';
+                payButton.disabled = true;
+                return;
+            }
+            try {
+                const userResponse = await fetch('/api/user-data');
+                const userData = await userResponse.json();
+                if (userData.fullName) {
+                    document.getElementById('userName').textContent = userData.fullName;
+                    document.getElementById('greetingText').textContent = `Good Day, ${userData.fullName}`;
+                } else { document.getElementById('userName').textContent = userEmail; }
+                const response = await fetch(`/api/applications/${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+                if (!response.ok || !result.application) throw new Error('No active application was found. Start an application from the dashboard first.');
+                displayApplication(result.application);
+            } catch (error) {
+                document.getElementById('applicationSummary').innerHTML = `<i class="fa-regular fa-file-lines"></i><p>${error.message}</p>`;
+                payButton.disabled = true;
+            }
+        }
+
+
+        document.querySelectorAll('input[name="processingType"]').forEach(input => input.addEventListener('change', updateSelectedPlan));
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            if (!activeApplication) return showMessage('No active application is available for payment.', 'error');
+            payButton.disabled = true;
+            payButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            const selectedPlan = document.querySelector('input[name="processingType"]:checked');
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            try {
+                const response = await fetch('/api/payments', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, applicationId: activeApplication.applicationId, processingType: selectedPlan.value, amount: Number(selectedPlan.dataset.amount), paymentMethod })
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.message || 'Unable to process payment.');
+                activeApplication.status = result.status;
+                document.getElementById('summaryStatus').textContent = result.status;
+                document.getElementById('successMessage').textContent = `${result.message} Appointment date: ${new Date(`${result.appointmentDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} at ${result.appointmentLocation}.`;
+                document.getElementById('successState').style.display = 'block';
+                payButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> Payment Complete';
+                showMessage('Payment successful.', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+                payButton.disabled = false;
+                payButton.innerHTML = '<i class="fa-solid fa-lock"></i> Pay Now';
+            }
+        });
+
+        loadPage();
+      
+    </script>
+</body>
+
+</html>
