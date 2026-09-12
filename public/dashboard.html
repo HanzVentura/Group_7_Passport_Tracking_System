@@ -236,6 +236,20 @@
             text-align: center;
         }
 
+        .status-step.inactive {
+            color: #9ca3af;
+        }
+
+        .status-step.inactive i {
+            color: #9ca3af !important;
+            font-size: 14px !important;
+        }
+
+        .status-step:not(.inactive) i {
+            color: #10b981 !important;
+            font-size: 14px !important;
+        }
+
         #pendingAppFilled {
             padding: 16px !important;
             border-radius: 8px;
@@ -558,7 +572,7 @@
             </div>
             <ul class="nav-links">
                 <li class="active"><a href="#" onclick="switchView('dashboard')"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fa-solid fa-wallet"></i> Payments</a></li>
+                <li><a href="payments.html"><i class="fa-solid fa-wallet"></i> Payments</a></li>
                 <li><a href="#"><i class="fa-solid fa-receipt"></i> Receipts</a></li>
                 <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i> Enquiries</a></li>
                 <li><a href="#"><i class="fa-solid fa-user"></i> Profile</a></li>
@@ -617,11 +631,11 @@
                             <div class="empty-state-desc">Application progress will be tracked here once submitted.</div>
                         </div>
                         <div id="statusAppFilled" style="display: none; font-size: 12px; justify-content: center; flex: 1; flex-direction: column;">
-                            <div class="status-step"><i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>Submitted</div>
-                            <div class="status-step"><i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>Payment</div>
-                            <div class="status-step"><i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>Under review</div>
-                            <div class="status-step"><i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>Processing</div>
-                            <div class="status-step" style="color: #9ca3af;"><i class="fa-solid fa-circle" style="font-size: 8px;"></i>Ready to pick-up</div>
+                            <div class="status-step" data-status-step="submitted"><i class="fa-solid fa-circle-check" style="color: #10b981; font-size: 14px;"></i>Submitted</div>
+                            <div class="status-step inactive" data-status-step="payment"><i class="fa-regular fa-circle"></i>Payment</div>
+                            <div class="status-step inactive" data-status-step="review"><i class="fa-regular fa-circle"></i>Under review</div>
+                            <div class="status-step inactive" data-status-step="processing"><i class="fa-regular fa-circle"></i>Processing</div>
+                            <div class="status-step inactive" data-status-step="pickup"><i class="fa-regular fa-circle"></i>Ready to pick-up</div>
                         </div>
                     </div>
 
@@ -637,7 +651,7 @@
                             <strong style="display: block; margin-bottom: 4px;">Processing:</strong>
                             <span>You are expected to come on</span>
                             <strong id="dispComeDate" style="display: block; margin: 4px 0; color: #1d4ed8; font-size: 13px;">---</strong>
-                            <span id="dispAppointmentLocation" style="font-size: 11px; color: #6b7280;">in Quezon City.</span>
+                            <span id="dispAppointmentLocation" style="font-size: 11px; color: #6b7280;">Appointment location not assigned yet.</span>
                         </div>
                     </div>
                 </div>
@@ -674,7 +688,7 @@
                     <div class="wizard-divider"></div>
                     <div class="wizard-step" id="wStep3">
                         <div class="step-badge">3</div>
-                        <span>Review & Payment</span>
+                        <span>Review</span>
                     </div>
                 </div>
 
@@ -786,8 +800,8 @@
                 <!-- STEP 3 CONTENT -->
                 <div class="step-pane" id="pane3" style="display:none;">
                     <div class="form-section-card">
-                        <div class="section-title">Applicant Summary & Fee Review</div>
-                        <div class="section-subtitle">Review your details before payment.</div>
+                        <div class="section-title">Applicant Summary</div>
+                        <div class="section-subtitle">Review your application details before continuing to payment.</div>
                         
                         <div class="form-row two-col" style="background: #f9fafb; padding: 15px; border-radius: 8px; font-size: 14px;">
                             <div>
@@ -801,25 +815,9 @@
                         </div>
                     </div>
 
-                    <div class="form-section-card">
-                        <div class="section-title">Fee Summary</div>
-                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px;">
-                            <span>Passport Application Fee</span>
-                            <span>₱950.00</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px;">
-                            <span>Courier Fee (Optional)</span>
-                            <span>₱150.00</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 16px; font-weight: 700;">
-                            <span>Total Amount</span>
-                            <span style="color: #2563eb;">₱1,100.00</span>
-                        </div>
-                    </div>
-
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="goToWizardStep(2)">Back</button>
-                        <button type="button" class="btn-primary" onclick="completePayment()">Pay Now (₱1,100.00)</button>
+                        <button type="button" class="btn-primary" onclick="completePayment()">Save &amp; Continue</button>
                     </div>
                 </div>
             </div>
@@ -837,11 +835,28 @@
             return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at 10:30 AM';
         }
 
+        function updateStatusTracker(status) {
+            const isPendingPayment = status === 'Pending Payment';
+            const activeSteps = isPendingPayment
+                ? ['submitted']
+                : ['submitted', 'payment', 'review', 'processing'];
+
+            document.querySelectorAll('[data-status-step]').forEach(step => {
+                const isActive = activeSteps.includes(step.dataset.statusStep);
+                const icon = step.querySelector('i');
+                step.classList.toggle('inactive', !isActive);
+                icon.className = isActive ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+            });
+        }
+
         function displaySavedApplication(application) {
             document.getElementById('dispAppId').innerText = application.applicationId;
             document.getElementById('dispAppStatus').innerText = application.status;
+            updateStatusTracker(application.status);
             document.getElementById('dispComeDate').innerText = formatAppointmentDate(application.appointmentDate);
-            document.getElementById('dispAppointmentLocation').innerText = `in ${application.appointmentLocation || 'Quezon City'}.`;
+            document.getElementById('dispAppointmentLocation').innerText = application.appointmentLocation
+                ? `in ${application.appointmentLocation}.`
+                : 'Appointment location not assigned yet.';
 
             if (application.createdAt) {
                 document.getElementById('dispSubDate').innerText = new Date(application.createdAt)
@@ -950,63 +965,36 @@
         }
 
         async function completePayment() {
-            // Generate Unique Application ID (e.g. PH-849201)
             const randomId = 'PH-' + Math.floor(100000 + Math.random() * 900000);
-            localStorage.setItem('activeAppId', randomId);
-
             const userEmail = localStorage.getItem('userEmail');
-            let savedApplication = null;
-            if (userEmail) {
-                try {
-                    const response = await fetch('/api/applications', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            email: userEmail,
-                            applicationId: randomId,
-                            status: 'Pending'
-                        })
-                    });
-                    if (response.ok) {
-                        const result = await response.json();
-                        savedApplication = result;
-                    }
-                } catch (error) {
-                    console.error('Unable to save application:', error);
-                }
+
+            if (!userEmail) {
+                alert('Please log in before saving your application.');
+                return;
             }
 
-            // Format current submission date (e.g., "10 Sep 2026")
-            const now = new Date();
-            const options = { day: 'numeric', month: 'short', year: 'numeric' };
-            const subDateFormatted = now.toLocaleDateString('en-GB', options);
+            try {
+                const response = await fetch('/api/applications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        applicationId: randomId,
+                        status: 'Pending Payment'
+                    })
+                });
+                const result = await response.json();
 
-            // Use the server appointment, with a local fallback if the API is unavailable.
-            const visitDate = new Date(now);
-            visitDate.setDate(now.getDate() + 7);
-            const appointmentDate = savedApplication?.appointmentDate || visitDate.toISOString().slice(0, 10);
-            const appointmentLocation = savedApplication?.appointmentLocation || 'Quezon City';
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Unable to save your application.');
+                }
 
-            // Inject dynamic text into Dashboard cards
-            document.getElementById('dispAppId').innerText = randomId;
-            document.getElementById('dispSubDate').innerText = subDateFormatted;
-            document.getElementById('dispAppStatus').innerText = savedApplication?.status || 'Pending';
-            document.getElementById('dispComeDate').innerText = formatAppointmentDate(appointmentDate);
-            document.getElementById('dispAppointmentLocation').innerText = `in ${appointmentLocation}.`;
-
-            // Switch to Dashboard View and swap card empty states with populated tracking layouts
-            switchView('dashboard');
-
-            document.getElementById('activeAppDefault').style.display = 'none';
-            document.getElementById('activeAppFilled').style.display = 'block';
-
-            document.getElementById('statusAppDefault').style.display = 'none';
-            document.getElementById('statusAppFilled').style.display = 'flex';
-
-            document.getElementById('pendingAppDefault').style.display = 'none';
-            document.getElementById('pendingAppFilled').style.display = 'flex';
-
-            alert('Payment Gateway Simulated Successfully! Your application has been submitted.');
+                localStorage.setItem('activeAppId', result.applicationId || randomId);
+                window.location.href = 'payments.html';
+            } catch (error) {
+                console.error('Unable to save application:', error);
+                alert(error.message);
+            }
         }
 
         function goToWizardStep(stepNo) {

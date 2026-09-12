@@ -151,25 +151,19 @@ app.get('/api/user-data', (req, res) => {
 
 // --- APPLICATION API ---
 app.post('/api/applications', (req, res) => {
-    const { email, applicationId, appId, status, appointmentDate, appointmentLocation } = req.body;
+    const { email, applicationId, appId } = req.body;
     const savedApplicationId = applicationId || appId;
 
     if (!email || !savedApplicationId) {
         return res.status(400).json({ success: false, message: 'Email and application ID are required.' });
     }
 
-    const applicationStatus = status || 'Pending';
-    const scheduledDate = appointmentDate || (() => {
-        const date = new Date();
-        date.setDate(date.getDate() + 7);
-        return date.toISOString().slice(0, 10);
-    })();
-    const scheduledLocation = appointmentLocation || 'DFA NCR East (SM Megamall)';
     const updateQuery = `UPDATE applications
-        SET application_id = ?, status = ?, appointment_date = ?, appointment_location = ?, updated_at = CURRENT_TIMESTAMP
+        SET application_id = ?, status = 'Pending Payment', appointment_date = NULL,
+            appointment_location = NULL, updated_at = CURRENT_TIMESTAMP
         WHERE email = ?`;
 
-    db.run(updateQuery, [savedApplicationId, applicationStatus, scheduledDate, scheduledLocation, email], function(err) {
+    db.run(updateQuery, [savedApplicationId, email], function(err) {
         if (err) {
             return res.status(500).json({ success: false, message: 'Unable to save application.' });
         }
@@ -178,16 +172,16 @@ app.post('/api/applications', (req, res) => {
             return res.json({
                 success: true,
                 applicationId: savedApplicationId,
-                status: applicationStatus,
-                appointmentDate: scheduledDate,
-                appointmentLocation: scheduledLocation
+                status: 'Pending Payment',
+                appointmentDate: null,
+                appointmentLocation: null
             });
         }
 
         db.run(
             `INSERT INTO applications (email, application_id, status, appointment_date, appointment_location)
              VALUES (?, ?, ?, ?, ?)`,
-            [email, savedApplicationId, applicationStatus, scheduledDate, scheduledLocation],
+            [email, savedApplicationId, 'Pending Payment', null, null],
             function(insertError) {
                 if (insertError) {
                     return res.status(500).json({ success: false, message: 'Unable to save application.' });
@@ -196,9 +190,9 @@ app.post('/api/applications', (req, res) => {
                     success: true,
                     id: this.lastID,
                     applicationId: savedApplicationId,
-                    status: applicationStatus,
-                    appointmentDate: scheduledDate,
-                    appointmentLocation: scheduledLocation
+                    status: 'Pending Payment',
+                    appointmentDate: null,
+                    appointmentLocation: null
                 });
             }
         );
@@ -218,6 +212,55 @@ app.get('/api/applications/:email', (req, res) => {
                 return res.status(500).json({ success: false, message: 'Unable to fetch application.' });
             }
             res.json({ success: true, application: application || null });
+        }
+    );
+});
+
+// --- PAYMENT API ---
+app.post('/api/payments', (req, res) => {
+    const { email, applicationId, processingType, amount, paymentMethod } = req.body;
+    const validPlans = {
+        regular: { label: 'Regular Processing', amount: 950 },
+        expedited: { label: 'Expedited / Rush Processing', amount: 1200 }
+    };
+    const selectedPlan = validPlans[processingType];
+    const validMethods = ['GCash', 'Maya', 'Credit Card'];
+
+    if (!email || !applicationId || !selectedPlan || Number(amount) !== selectedPlan.amount || !validMethods.includes(paymentMethod)) {
+        return res.status(400).json({ success: false, message: 'Please provide a valid application, processing plan, amount, and payment method.' });
+    }
+
+    const appointmentDate = (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + (processingType === 'expedited' ? 7 : 12));
+        return date.toISOString().slice(0, 10);
+    })();
+    const appointmentLocation = 'DFA NCR (SM Megamall)';
+
+    db.run(
+        `UPDATE applications
+         SET status = 'Paid', appointment_date = ?, appointment_location = ?,
+             updated_at = CURRENT_TIMESTAMP
+         WHERE email = ? AND application_id = ?`,
+        [appointmentDate, appointmentLocation, email, applicationId],
+        function(err) {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'Unable to process payment.' });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ success: false, message: 'Application not found.' });
+            }
+            res.json({
+                success: true,
+                message: 'Payment recorded successfully. Your appointment has been generated.',
+                applicationId,
+                status: 'Paid',
+                appointmentDate,
+                appointmentLocation,
+                processingType: selectedPlan.label,
+                amount: selectedPlan.amount,
+                paymentMethod
+            });
         }
     );
 });
