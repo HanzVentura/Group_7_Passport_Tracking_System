@@ -46,6 +46,10 @@ db.serialize(() => {
         application_id TEXT NOT NULL,
         application_type TEXT NOT NULL DEFAULT 'New First-Time Application',
         status TEXT NOT NULL DEFAULT 'Pending',
+        processing_type TEXT,
+        amount INTEGER,
+        payment_amount INTEGER,
+        payment_method TEXT,
         appointment_date TEXT,
         appointment_location TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -83,6 +87,10 @@ db.serialize(() => {
         addColumn('appointment_date', 'TEXT');
         addColumn('appointment_location', 'TEXT');
         addColumn('application_type', "TEXT NOT NULL DEFAULT 'New First-Time Application'");
+        addColumn('processing_type', 'TEXT');
+        addColumn('amount', 'INTEGER');
+        addColumn('payment_amount', 'INTEGER');
+        addColumn('payment_method', 'TEXT');
     });
 
     db.all(`PRAGMA table_info(enquiries)`, (err, columns) => {
@@ -208,6 +216,9 @@ app.get('/api/applications/:email', (req, res) => {
     db.get(
         `SELECT id, email, application_id AS applicationId,
             application_type AS applicationType, status,
+            processing_type AS processingType, COALESCE(amount, payment_amount) AS amount,
+            payment_amount AS paymentAmount,
+            payment_method AS paymentMethod,
             appointment_date AS appointmentDate,
             appointment_location AS appointmentLocation,
             created_at AS createdAt, updated_at AS updatedAt
@@ -245,10 +256,11 @@ app.post('/api/payments', (req, res) => {
 
     db.run(
         `UPDATE applications
-         SET status = 'Paid', appointment_date = ?, appointment_location = ?,
+         SET status = 'Paid', processing_type = ?, amount = ?, payment_amount = ?, payment_method = ?,
+             appointment_date = ?, appointment_location = ?,
              updated_at = CURRENT_TIMESTAMP
          WHERE email = ? AND application_id = ?`,
-        [appointmentDate, appointmentLocation, email, applicationId],
+        [selectedPlan.label, selectedPlan.amount, selectedPlan.amount, paymentMethod, appointmentDate, appointmentLocation, email, applicationId],
         function(err) {
             if (err) {
                 return res.status(500).json({ success: false, message: 'Unable to process payment.' });

@@ -90,7 +90,7 @@
             <ul class="nav-links">
                 <li><a href="dashboard.html"><i class="fa-solid fa-house"></i>Dashboard</a></li>
                 <li class="active"><a href="payments.html"><i class="fa-solid fa-wallet"></i>Payments</a></li>
-                <li><a href="#"><i class="fa-solid fa-receipt"></i>Receipts</a></li>
+                <li><a href="receipts.html"><i class="fa-solid fa-receipt"></i>Receipts</a></li>
                 <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i>Enquiries</a></li>
                 <li><a href="#"><i class="fa-solid fa-user"></i>Profile</a></li>
                 <li><a href="#"><i class="fa-solid fa-gear"></i>Settings</a></li>
@@ -169,6 +169,7 @@
     </main>
 
 
+    <script src="script.js"></script>
     <script>
         const userEmail = localStorage.getItem('userEmail');
         let activeApplication = null;
@@ -243,15 +244,26 @@
             payButton.disabled = true;
             payButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
             const selectedPlan = document.querySelector('input[name="processingType"]:checked');
+            const paymentAmount = Number(selectedPlan.dataset.amount);
+            const applicationType = activeApplication.applicationType
+                || localStorage.getItem('applicationType')
+                || 'New First-Time Application';
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
             try {
                 const response = await fetch('/api/payments', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: userEmail, applicationId: activeApplication.applicationId, processingType: selectedPlan.value, amount: Number(selectedPlan.dataset.amount), paymentMethod })
+                    body: JSON.stringify({ email: userEmail, applicationId: activeApplication.applicationId, processingType: selectedPlan.value, amount: paymentAmount, paymentMethod })
                 });
                 const result = await response.json();
                 if (!response.ok || !result.success) throw new Error(result.message || 'Unable to process payment.');
                 activeApplication.status = result.status;
+                activeApplication.paymentAmount = result.amount ?? paymentAmount;
+                activeApplication.applicationType = applicationType;
+                savePaymentSelection(
+                    activeApplication.paymentAmount,
+                    result.processingType || selectedPlan.value,
+                    applicationType
+                );
                 document.getElementById('summaryStatus').textContent = result.status;
                 document.getElementById('successMessage').textContent = `${result.message} Appointment date: ${new Date(`${result.appointmentDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} at ${result.appointmentLocation}.`;
                 document.getElementById('successState').style.display = 'block';

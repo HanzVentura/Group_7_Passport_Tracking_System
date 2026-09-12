@@ -3,7 +3,14 @@ const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 let slideInterval;
 
+function savePaymentSelection(amount, processingType, applicationType) {
+    localStorage.setItem('paymentAmount', String(amount));
+    localStorage.setItem('paymentProcessingType', processingType);
+    localStorage.setItem('applicationType', applicationType);
+}
+
 function showSlide(index) {
+    if (!slides.length || !dots.length) return;
     if (index >= slides.length) currentIndex = 0;
     if (index < 0) currentIndex = slides.length - 1;
 
@@ -32,6 +39,7 @@ function setSlide(index) {
 }
 
 function startInterval() {
+    if (!slides.length || !dots.length) return;
     slideInterval = setInterval(nextSlide, 2000); 
 }
 
@@ -40,7 +48,7 @@ function resetInterval() {
     startInterval();
 }
 
-startInterval();
+if (slides.length && dots.length) startInterval();
 
 // --- VIEW TOGGLING LOGIC (Sign Up <-> Log In) ---
 const signupSection = document.getElementById('signup-section');
@@ -50,20 +58,24 @@ const showSignupBtn = document.getElementById('show-signup');
 const mainLayout = document.getElementById('mainLayout'); 
 
 // WHEN LOG IN IS CLICKED: Photos move to the LEFT, Form moves to the RIGHT
-showLoginBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    signupSection.classList.add('hidden');
-    loginSection.classList.remove('hidden');
-    mainLayout.classList.add('reverse-layout');
-});
+if (showLoginBtn && signupSection && loginSection && mainLayout) {
+    showLoginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        signupSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+        mainLayout.classList.add('reverse-layout');
+    });
+}
 
 // WHEN SIGN UP IS CLICKED: Form stays on the LEFT, Photos stay on the RIGHT
-showSignupBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    loginSection.classList.add('hidden');
-    signupSection.classList.remove('hidden');
-    mainLayout.classList.remove('reverse-layout');
-});
+if (showSignupBtn && signupSection && loginSection && mainLayout) {
+    showSignupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginSection.classList.add('hidden');
+        signupSection.classList.remove('hidden');
+        mainLayout.classList.remove('reverse-layout');
+    });
+}
 
 // --- SHOW/HIDE PASSWORD TOGGLE LOGIC ---
 const togglePasswordSpans = document.querySelectorAll('.show-password');
@@ -91,9 +103,10 @@ const successScreen = document.getElementById('successScreen');
 const errorMessage = document.getElementById('error-message'); 
 const emailInput = document.getElementById('email');
 
-emailInput.addEventListener('input', () => errorMessage.classList.add('hidden'));
-document.getElementById('password').addEventListener('input', () => errorMessage.classList.add('hidden'));
-document.getElementById('confirm-password').addEventListener('input', () => errorMessage.classList.add('hidden'));
+if (signupForm && emailInput && errorMessage) {
+    emailInput.addEventListener('input', () => errorMessage.classList.add('hidden'));
+    document.getElementById('password').addEventListener('input', () => errorMessage.classList.add('hidden'));
+    document.getElementById('confirm-password').addEventListener('input', () => errorMessage.classList.add('hidden'));
 
 signupForm.addEventListener('submit', async function(event) {
     event.preventDefault(); 
@@ -138,14 +151,16 @@ signupForm.addEventListener('submit', async function(event) {
         errorMessage.classList.add('hidden');
     }
 });
+}
 
 // 2. Log In Submission (Verifies with Database & Opens Dashboard)
 const loginForm = document.getElementById('loginForm');
 const loginErrorMessage = document.getElementById('login-error-message');
 const loginEmailInput = document.getElementById('login-email');
 
-loginEmailInput.addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
-document.getElementById('login-password').addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
+if (loginForm && loginEmailInput && loginErrorMessage) {
+    loginEmailInput.addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
+    document.getElementById('login-password').addEventListener('input', () => loginErrorMessage.classList.add('hidden'));
 
 async function handleLoginSubmit(event) {
     event.preventDefault();
@@ -183,3 +198,4 @@ async function handleLoginSubmit(event) {
 }
 
 loginForm.addEventListener('submit', handleLoginSubmit);
+}
