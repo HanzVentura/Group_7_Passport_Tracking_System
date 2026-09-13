@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipts - Passport Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; color: #333; display: flex; min-height: 100vh; overflow-x: hidden; }
+        .sidebar { width: 260px; flex: 0 0 260px; background-color: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 0; }
+        .sidebar-top { display: flex; flex-direction: column; }
+        .user-profile-mini { display: flex; align-items: center; padding: 0 20px 20px; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .user-profile-mini i { font-size: 36px; color: #3b82f6; margin-right: 12px; }
+        .user-info .name { font-weight: 600; font-size: 14px; color: #1f2937; overflow-wrap: anywhere; }
+        .nav-links { list-style: none; }
+        .nav-links li a { display: flex; align-items: center; padding: 12px 20px; color: #4b5563; text-decoration: none; font-size: 14px; transition: all .2s ease; }
+        .nav-links li.active a, .nav-links li a:hover { background-color: #eff6ff; color: #3b82f6; border-right: 4px solid #3b82f6; }
+        .nav-links li a i { margin-right: 12px; font-size: 16px; }
+        .sidebar-bottom { padding: 0 20px; }
+        .sidebar-bottom a { display: flex; align-items: center; padding: 10px 0; color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .sidebar-bottom a i { margin-right: 12px; }
+        .main-content { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; }
+        .header { background-color: #fff; padding: 20px 30px; border-bottom: 1px solid #e0e0e0; font-size: 20px; font-weight: 700; color: #1f2937; }
+        .dashboard-container { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .welcome-banner { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; padding: 25px 30px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(59,130,246,.15); }
+        .welcome-banner h1 { font-size: 24px; margin-bottom: 8px; }
+        .welcome-banner p { font-size: 14px; opacity: .9; }
+        .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,.02); }
+        .card-title { font-size: 16px; font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+        .card-subtitle { color: #6b7280; font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
+        .table-wrap { overflow-x: auto; }
+        .transaction-table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 14px; }
+        .transaction-table th { background: #f9fafb; color: #4b5563; font-size: 12px; font-weight: 700; letter-spacing: .03em; padding: 13px 14px; text-align: left; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+        .transaction-table td { color: #374151; padding: 16px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+        .transaction-table tbody tr:last-child td { border-bottom: 0; }
+        .transaction-table td strong { color: #1f2937; }
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: #dcfce7; color: #166534; font-size: 12px; font-weight: 700; }
+        .print-button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 7px; background: #fff; color: #374151; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .print-button:hover { background: #f3f4f6; }
+        .message { color: #6b7280; font-size: 14px; line-height: 1.5; padding: 28px 10px; text-align: center; }
+        .message i { color: #9ca3af; display: block; font-size: 32px; margin-bottom: 12px; }
+        @media (max-width: 680px) { body { display: block; } .sidebar { width: 100%; height: auto; padding: 12px 0; } .sidebar-bottom { display: none; } .nav-links { display: grid; grid-template-columns: repeat(3, 1fr); } .nav-links li a { justify-content: center; padding: 10px 6px; font-size: 11px; gap: 4px; flex-direction: column; } .nav-links li a i { margin: 0; } .header { padding: 16px 20px; } .dashboard-container { padding: 20px 16px; } .welcome-banner { padding: 20px; } .card { padding: 18px 14px; } }
+        @media print { .sidebar, .header, .welcome-banner, .card-subtitle, .print-button { display: none !important; } body, .main-content, .dashboard-container { background: #fff; display: block; min-height: 0; padding: 0; } .card { border: 0; box-shadow: none; padding: 0; } .transaction-table { min-width: 0; } }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="user-profile-mini"><i class="fa-solid fa-circle-user"></i><div class="user-info"><div class="name" id="userName">Loading...</div></div></div>
+            <ul class="nav-links">
+                <li><a href="dashboard.html"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li><a href="payments.html"><i class="fa-solid fa-wallet"></i> Payments</a></li>
+                <li class="active"><a href="receipts.html"><i class="fa-solid fa-receipt"></i> Receipts</a></li>
+                <li><a href="enquiries.html"><i class="fa-solid fa-circle-question"></i> Enquiries</a></li>
+                <li><a href="#"><i class="fa-solid fa-user"></i> Profile</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom"><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a></div>
+    </aside>
+
+
+    <main class="main-content">
+        <div class="header">RECEIPTS</div>
+        <div class="dashboard-container">
+            <div class="welcome-banner"><h1 id="greetingText">Good Day</h1><p>Review your completed passport application transactions and print receipts.</p></div>
+            <section class="card">
+                <div class="card-title">Transaction History</div>
+                <div class="card-subtitle">Your paid passport application transactions appear here.</div>
+                <div class="table-wrap">
+                    <table class="transaction-table">
+                        <thead><tr><th>Application</th><th>Application ID</th><th>Transaction Date</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
+                        <tbody id="receiptRows"></tbody>
+                    </table>
+                </div>
+                <div class="message" id="receiptMessage"><i class="fa-regular fa-file-lines"></i>No paid transactions found.</div>
+            </section>
+        </div>
+    </main>
+
+
+    <script>
+        const userEmail = localStorage.getItem('userEmail');
+        const receiptRows = document.getElementById('receiptRows');
+        const receiptMessage = document.getElementById('receiptMessage');
+
+
+        function formatDate(dateValue) {
+            if (!dateValue) return '---';
+            return new Date(dateValue).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+
+        function printReceipt() {
+            window.print();
+        }
+
+
+        function formatAmount(application) {
+            const amount = Number(application.amount
+                ?? application.paymentAmount
+                ?? localStorage.getItem('paymentAmount'));
+            return Number.isFinite(amount) && amount > 0
+                ? `₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`
+                : '---';
+        }
+
+
+        function renderReceipt(application) {
+            if (!application || application.status !== 'Paid') return;
+            const applicationType = application.applicationType
+                || localStorage.getItem('applicationType')
+                || 'Passport Application';
+            receiptRows.innerHTML = `<tr>
+                <td><strong>${applicationType}</strong></td>
+                <td>${application.applicationId}</td>
+                <td>${formatDate(application.updatedAt)}</td>
+                <td>${formatAmount(application)}</td>
+                <td><span class="status-badge"><i class="fa-solid fa-check"></i>Paid</span></td>
+                <td><button class="print-button" type="button" onclick="printReceipt()"><i class="fa-solid fa-print"></i> Print</button></td>
+            </tr>`;
+            receiptMessage.style.display = 'none';
+        }
+
+
+        async function loadReceipts() {
+            if (!userEmail) {
+                receiptMessage.textContent = 'Please log in to view your receipts.';
+                return;
+            }
+            try {
+                const userResponse = await fetch('/api/user-data');
+                const userData = await userResponse.json();
+                document.getElementById('userName').textContent = userData.fullName || userEmail;
+                document.getElementById('greetingText').textContent = userData.fullName ? `Good Day, ${userData.fullName}` : 'Good Day';
+
+
+                const response = await fetch(`/api/applications/${encodeURIComponent(userEmail)}`);
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message || 'Unable to load receipts.');
+                renderReceipt(result.application);
+            } catch (error) {
+                receiptMessage.textContent = error.message;
+            }
+        }
+
+
+        loadReceipts();
+    </script>
+</body>
+</html>
